@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String         @id @default(uuid())
+  phone            String         @unique
+  name             String
+  class            Int
+  board            String
+  language         String         @default("hi")
+  tier             String         @default("free")
+  examDate         DateTime?
+  studyHoursPerDay Int            @default(4)
+  createdAt        DateTime       @default(now())
+
+  doubts           Doubt[]
+  studyPlan        StudyPlan?
+  weaknesses       WeaknessMap[]
+  sessions         StudySession[]
+}
+
+model Doubt {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  questionText     String
+  questionAudio    String?
+  subject          String
+  chapter          String?
+  aiResponse       String
+  audioResponse    String?
+  conceptsTagged   String[]
+  wasHelpful       Boolean?
+  escalatedToHuman Boolean  @default(false)
+  createdAt        DateTime @default(now())
+}
+
+model WeaknessMap {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  subject       String
+  chapter       String
+  concept       String
+  weaknessScore Float
+  lastAttempted DateTime
+  attemptCount  Int      @default(0)
+  wrongCount    Int      @default(0)
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, subject, chapter, concept])
+}
+
+model StudyPlan {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  planData      Json
+  weeklyTarget  Int
+  currentStreak Int      @default(0)
+  lastUpdated   DateTime @updatedAt
+}
+
+model StudySession {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  subject         String
+  durationMinutes Int
+  topicsCovered   String[]
+  date            DateTime @default(now())
+}
