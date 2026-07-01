@@ -1,0 +1,158 @@
+import { Router, Request, Response, NextFunction } from 'express';
+import { z } from 'zod';
+import jwt from 'jsonwebtoken';
+import admin from 'firebase-admin';
+import { prisma } from '../lib/prisma';
+import { env } from '../lib/env';
+import { logger } from '../lib/logger';
+import { AppError } from '../middleware/errorHandler';
+import { requireAuth, JwtPayload } from '../middleware/auth';
+import { authLimiter } from '../middleware/rateLimit';
+
+const router = Router();
+
+// ── Schemas ────────────────────────────────────────────────────────────────
+
+const verifyOtpSchema = z.object({
+  idToken: z.string().min(1, 'Firebase ID token is required'),
+});
+
+const onboardSchema = z.object({
+  name: z.string().min(1).max(100),
+  class: z.number().int().min(6).max(13), // 13 = JEE/NEET repeater year
+  board: z.enum(['CBSE', 'ICSE', 'STATE', 'JEE', 'NEET']),
+  language: z.enum(['hi', 'en', 'ta', 'te', 'kn', 'mr']).default('hi'),
+  examDate: z.string().datetime().optional(),
+  studyHoursPerDay: z.number().int().min(1).max(18).default(4),
+});
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function signJwt(payload: JwtPayload): string {
+  return jwt.sign(payload, env.JWT_SECRET, { expiresIn: '30d' });
+}
+
+// ── Routes ─────────────────────────────────────────────────────────────────
+
+/**
+ * POST /api/auth/verify-otp
+ * Verifies a Firebase phone OTP ID token, upserts the user, returns JWT.
+ */
+router.post(
+  '/verify-otp',
+  authLimiter,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { idToken } = verifyOtpSchema.parse(req.body);
+
+      let decodedToken: admin.auth.DecodedIdToken;
+      try {
+        decodedToken = await admin.auth().verifyIdToken(idToken);
+      } catch (err) {
+        logger.warn('Firebase token verification failed', { error: String(err) });
+        throw new AppError('Invalid Firebase ID token', 'INVALID_FIREBASE_TOKEN', 401);
+      }
+
+      const phone = decodedToken.phone_number;
+      if (!phone) {
+        throw new AppError('Phone number not present in Firebase token', 'NO_PHONE_IN_TOKEN', 400);
+      }
+
+      // Upsert: if new user, create with placeholder name — onboarding fills the rest
+      const user = await prisma.user.upsert({
+        where: { phone },
+        update: { }, // existing users: just touch nothing — profile updates go to /onboard
+        create: {
+          phone,
+          name: '',
+          class: 0,    // sentinel — onboarding will set real values
+          board: '',
+          language: 'hi',
+          tier: 'free',
+        },
+        select: { id: true, phone: true, tier: true, name: true, class: true },
+      });
+
+      const isOnboarded = user.class > 0;
+      const token = signJwt({ userId: user.id, phone: user.phone, tier: user.tier });
+
+      logger.info('User authenticated', { userId: user.id, isOnboarded });
+
+      res.json({ token, isOnboarded, userId: user.id });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * POST /api/auth/onboard
+ * Saves class, board, exam date, language after first login.
+ */
+router.post(
+  '/onboard',
+  requireAuth,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = onboardSchema.parse(req.body);
+      const userId = req.user!.userId;
+
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          name: data.name,
+          class: data.class,
+          board: data.board,
+          language: data.language,
+          examDate: data.examDate ? new Date(data.examDate) : null,
+          studyHoursPerDay: data.studyHoursPerDay,
+        },
+        select: { id: true, name: true, class: true, board: true, language: true, tier: true },
+      });
+
+      logger.info('User onboarded', { userId });
+
+      res.json({ user });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * GET /api/auth/profile
+ * Returns the authenticated user's profile.
+ */
+router.get(
+  '/profile',
+  requireAuth,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.user!.userId },
+        select: {
+          id: true,
+          phone: true,
+          name: true,
+          class: true,
+          board: true,
+          language: true,
+          tier: true,
+          examDate: true,
+          studyHoursPerDay: true,
+          createdAt: true,
+        },
+      });
+
+      if (!user) {
+        throw new AppError('User not found', 'USER_NOT_FOUND', 404);
+      }
+
+      res.json({ user });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+export default router;

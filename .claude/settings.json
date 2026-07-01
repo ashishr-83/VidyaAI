@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo '%claude_tool_input%' | grep -q 'backend/' 2>/dev/null; then cd C:/my-Project/Vidya_AI/VidyaAI/backend && npx tsc --noEmit 2>&1 | head -20; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '---' && echo 'Session complete. Next steps:' && echo '1. Run: git status' && echo '2. Run: git add -p' && echo '3. Run: git commit -m \"feat(...): ...\"' && echo '4. Run: git push origin <branch-name>' && echo '---'"
+          }
+        ]
+      }
+    ]
+  }
+}
