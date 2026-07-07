@@ -69,11 +69,14 @@ async function shutdown(signal: string): Promise<void> {
 process.on('SIGTERM', () => void shutdown('SIGTERM'));
 process.on('SIGINT', () => void shutdown('SIGINT'));
 
-app.listen(env.PORT, () => {
-  logger.info('VidyaAI backend started', {
-    port: env.PORT,
-    env: env.NODE_ENV,
+// Only bind the port when running as the main entry point, not when imported by tests.
+if (require.main === module) {
+  app.listen(env.PORT, () => {
+    logger.info('VidyaAI backend started', {
+      port: env.PORT,
+      env: env.NODE_ENV,
+    });
   });
-});
+}
 
 export default app;
