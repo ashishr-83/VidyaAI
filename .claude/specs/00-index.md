@@ -28,7 +28,7 @@ All frontend specs target the **web browser first**. Mobile-specific adjustments
 | # | Spec | Session | Status |
 |---|------|---------|--------|
 | 01 | [Backend Foundation](backend/01-backend-foundation.md) | Session 1 | `DONE` |
-| 02 | [Claude Doubt Solver API](backend/02-doubt-solver.md) | Session 2 | `READY` |
+| 02 | [Claude Doubt Solver API](backend/02-doubt-solver.md) | Session 2 | `DONE` |
 | 03 | [Voice Pipeline](backend/03-voice-pipeline.md) | Session 3 | `READY` |
 | 04 | [Study Plan API](backend/04-study-plan.md) | Session 6 | `READY` |
 | 05 | [Progress & Weakness API](backend/05-progress-weakness.md) | Session 7 | `READY` |

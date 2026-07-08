@@ -8,6 +8,7 @@ node_modules/
 .env.local
 .env.development
 .env.production
+.env.docker
 .env.test
 *.env
 
@@ -61,3 +62,6 @@ coverage/
 
 # Claude Code local storage
 .cline_storage/
+
+# Firebase service account keys — contain real credentials, never commit
+*firebase-adminsdk*.json

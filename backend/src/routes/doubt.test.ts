@@ -54,6 +54,12 @@ jest.mock('../services/claude', () => ({
   tagWeakness: jest.fn(),
 }));
 
+jest.mock('../services/speech', () => ({
+  getUploadPresignedUrl: jest.fn(),
+  transcribeAudio: jest.fn(),
+  synthesiseSpeech: jest.fn(),
+}));
+
 // Make the burst-guard rate limiter a no-op in tests — the in-memory store
 // is a singleton that bleeds across describe blocks when running sequentially.
 jest.mock('../middleware/rateLimit', () => {
@@ -66,6 +72,7 @@ import app from '../index';
 
 const { prisma } = require('../lib/prisma');
 const { solveDoubt, tagWeakness } = require('../services/claude');
+const { getUploadPresignedUrl, transcribeAudio, synthesiseSpeech } = require('../services/speech');
 
 // ── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -123,6 +130,9 @@ describe('POST /api/doubt/solve', () => {
     });
     (prisma.doubt.create as jest.Mock).mockResolvedValue(mockDoubt);
     (tagWeakness as jest.Mock).mockResolvedValue(null);
+    (synthesiseSpeech as jest.Mock).mockResolvedValue(
+      'https://cdn.vidyaai.in/audio/responses/abc.mp3'
+    );
   });
 
   it('returns 401 when no auth header', async () => {
@@ -166,7 +176,11 @@ describe('POST /api/doubt/solve', () => {
     expect(res.body.code).toBe('QUOTA_EXCEEDED');
   });
 
-  it('returns 200 with doubtId, answer, audioUrl=null for valid request', async () => {
+  it('returns 200 with doubtId, answer, audioUrl for valid text request', async () => {
+    (synthesiseSpeech as jest.Mock).mockResolvedValue(
+      'https://cdn.vidyaai.in/audio/responses/abc.mp3'
+    );
+
     const res = await request(app)
       .post('/api/doubt/solve')
       .set('Authorization', `Bearer ${FREE_TOKEN}`)
@@ -175,7 +189,7 @@ describe('POST /api/doubt/solve', () => {
     expect(res.status).toBe(200);
     expect(res.body.doubtId).toBeDefined();
     expect(res.body.answer).toBe('Newton ka teesra niyam kehta hai...');
-    expect(res.body.audioUrl).toBeNull();
+    expect(res.body.audioUrl).toBe('https://cdn.vidyaai.in/audio/responses/abc.mp3');
     expect(res.body.conceptsTagged).toEqual([]);
   });
 
@@ -397,5 +411,195 @@ describe('POST /api/doubt/escalate', () => {
     expect(res.status).toBe(200);
     expect(res.body.ok).toBe(true);
     expect(res.body.message).toBeDefined();
+  });
+});
+
+// ── GET /api/doubt/upload-url ───────────────────────────────────────────────
+
+describe('GET /api/doubt/upload-url', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (getUploadPresignedUrl as jest.Mock).mockResolvedValue({
+      uploadUrl: 'https://s3.amazonaws.com/vidyaai-audio/audio/uploads/user-abc/uuid.webm?X-Amz-...',
+      s3Key: 'audio/uploads/user-abc/uuid.webm',
+    });
+  });
+
+  it('returns 401 without auth', async () => {
+    const res = await request(app).get('/api/doubt/upload-url?contentType=audio/webm');
+    expect(res.status).toBe(401);
+    expect(res.body.code).toBe('UNAUTHORIZED');
+  });
+
+  it('returns 400 for missing contentType', async () => {
+    const res = await request(app)
+      .get('/api/doubt/upload-url')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`);
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('returns 400 for unsupported contentType', async () => {
+    const res = await request(app)
+      .get('/api/doubt/upload-url?contentType=audio/wav')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`);
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('returns 200 with uploadUrl, s3Key, expiresIn for valid request', async () => {
+    const res = await request(app)
+      .get('/api/doubt/upload-url?contentType=audio/webm')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.uploadUrl).toBeDefined();
+    expect(res.body.s3Key).toMatch(/^audio\/uploads\/user-abc\//);
+    expect(res.body.expiresIn).toBe(300);
+  });
+});
+
+// ── POST /api/doubt/transcribe ──────────────────────────────────────────────
+
+describe('POST /api/doubt/transcribe', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (transcribeAudio as jest.Mock).mockResolvedValue('Newton ka teesra niyam kya hota hai?');
+  });
+
+  it('returns 401 without auth', async () => {
+    const res = await request(app)
+      .post('/api/doubt/transcribe')
+      .send({ s3Key: 'audio/uploads/user-abc/uuid.webm' });
+    expect(res.status).toBe(401);
+  });
+
+  it('returns 400 INVALID_S3_KEY when s3Key belongs to a different user', async () => {
+    const res = await request(app)
+      .post('/api/doubt/transcribe')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({ s3Key: 'audio/uploads/other-user/uuid.webm', language: 'hi' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('INVALID_S3_KEY');
+  });
+
+  it('returns 200 with transcribedText for valid request', async () => {
+    const res = await request(app)
+      .post('/api/doubt/transcribe')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({ s3Key: 'audio/uploads/user-abc/uuid.webm', language: 'hi' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.transcribedText).toBe('Newton ka teesra niyam kya hota hai?');
+  });
+
+  it('propagates 504 TRANSCRIPTION_TIMEOUT from service', async () => {
+    const { AppError } = require('../middleware/errorHandler');
+    (transcribeAudio as jest.Mock).mockRejectedValue(
+      new AppError('Transcription timed out', 'TRANSCRIPTION_TIMEOUT', 504)
+    );
+
+    const res = await request(app)
+      .post('/api/doubt/transcribe')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({ s3Key: 'audio/uploads/user-abc/uuid.webm', language: 'hi' });
+
+    expect(res.status).toBe(504);
+    expect(res.body.code).toBe('TRANSCRIPTION_TIMEOUT');
+  });
+
+  it('propagates 422 TRANSCRIPTION_FAILED from service', async () => {
+    const { AppError } = require('../middleware/errorHandler');
+    (transcribeAudio as jest.Mock).mockRejectedValue(
+      new AppError('Transcription failed', 'TRANSCRIPTION_FAILED', 422)
+    );
+
+    const res = await request(app)
+      .post('/api/doubt/transcribe')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({ s3Key: 'audio/uploads/user-abc/uuid.webm', language: 'hi' });
+
+    expect(res.status).toBe(422);
+    expect(res.body.code).toBe('TRANSCRIPTION_FAILED');
+  });
+});
+
+// ── POST /api/doubt/solve (with audioUrl) ──────────────────────────────────
+
+describe('POST /api/doubt/solve — voice input (audioUrl)', () => {
+  const AUDIO_URL = 'audio/uploads/user-abc/uuid.webm';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+    (prisma.doubt.count as jest.Mock).mockResolvedValue(0);
+    (prisma.weaknessMap.findMany as jest.Mock).mockResolvedValue([]);
+    (transcribeAudio as jest.Mock).mockResolvedValue('Newton ka teesra niyam kya hota hai?');
+    (solveDoubt as jest.Mock).mockResolvedValue({
+      answer: 'Newton ka teesra niyam kehta hai...',
+      latencyMs: 1200,
+    });
+    (synthesiseSpeech as jest.Mock).mockResolvedValue(
+      'https://cdn.vidyaai.in/audio/responses/abc.mp3'
+    );
+    (prisma.doubt.create as jest.Mock).mockResolvedValue({
+      ...mockDoubt,
+      questionAudio: AUDIO_URL,
+      audioResponse: 'https://cdn.vidyaai.in/audio/responses/abc.mp3',
+    });
+    (tagWeakness as jest.Mock).mockResolvedValue(null);
+  });
+
+  it('returns 400 INVALID_S3_KEY when audioUrl belongs to a different user', async () => {
+    const res = await request(app)
+      .post('/api/doubt/solve')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({
+        audioUrl: 'audio/uploads/other-user/uuid.webm',
+        subject: 'Physics',
+        language: 'hi',
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('INVALID_S3_KEY');
+  });
+
+  it('returns 429 QUOTA_EXCEEDED when free user has used 3 voice doubts today', async () => {
+    (prisma.doubt.count as jest.Mock).mockResolvedValue(3);
+
+    const res = await request(app)
+      .post('/api/doubt/solve')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({ audioUrl: AUDIO_URL, subject: 'Physics', language: 'hi' });
+
+    expect(res.status).toBe(429);
+    expect(res.body.code).toBe('QUOTA_EXCEEDED');
+  });
+
+  it('returns 200 with audioUrl in response for valid voice request', async () => {
+    const res = await request(app)
+      .post('/api/doubt/solve')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({ audioUrl: AUDIO_URL, subject: 'Physics', language: 'hi' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.doubtId).toBeDefined();
+    expect(res.body.answer).toBe('Newton ka teesra niyam kehta hai...');
+    expect(res.body.audioUrl).toBe('https://cdn.vidyaai.in/audio/responses/abc.mp3');
+  });
+
+  it('calls transcribeAudio then solveDoubt then synthesiseSpeech in sequence', async () => {
+    await request(app)
+      .post('/api/doubt/solve')
+      .set('Authorization', `Bearer ${FREE_TOKEN}`)
+      .send({ audioUrl: AUDIO_URL, subject: 'Physics', language: 'hi' });
+
+    expect(transcribeAudio).toHaveBeenCalledTimes(1);
+    expect(solveDoubt).toHaveBeenCalledTimes(1);
+    expect(synthesiseSpeech).toHaveBeenCalledWith({
+      text: 'Newton ka teesra niyam kehta hai...',
+      languageCode: 'hi',
+    });
   });
 });
