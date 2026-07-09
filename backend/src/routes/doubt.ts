@@ -6,20 +6,80 @@ import { requireAuth, requireTier } from '../middleware/auth';
 import { doubtLimiter } from '../middleware/rateLimit';
 import { AppError } from '../middleware/errorHandler';
 import { solveDoubt, tagWeakness } from '../services/claude';
+import { getUploadPresignedUrl, transcribeAudio, synthesiseSpeech } from '../services/speech';
 
 const router = Router();
 
 router.use(requireAuth);
 router.use(doubtLimiter);
 
-// ── POST /api/doubt/solve ──────────────────────────────────────────────────
+// ── GET /api/doubt/upload-url ─────────────────────────────────────────────────
 
-const solveSchema = z.object({
-  text: z.string().min(5).max(2000),
-  subject: z.string().min(1),
-  chapter: z.string().optional(),
+const uploadUrlQuerySchema = z.object({
+  contentType: z.enum(['audio/webm', 'audio/mp4', 'audio/ogg']),
+});
+
+router.get(
+  '/upload-url',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const query = uploadUrlQuerySchema.parse(req.query);
+      const userId = req.user!.userId;
+
+      const { uploadUrl, s3Key } = await getUploadPresignedUrl({ userId, contentType: query.contentType });
+
+      res.json({ uploadUrl, s3Key, expiresIn: 300 });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ── POST /api/doubt/transcribe ────────────────────────────────────────────────
+
+const transcribeSchema = z.object({
+  s3Key: z.string().min(1),
   language: z.enum(['hi', 'en', 'ta', 'te', 'kn', 'mr']).default('hi'),
 });
+
+router.post(
+  '/transcribe',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const body = transcribeSchema.parse(req.body);
+      const userId = req.user!.userId;
+
+      if (!body.s3Key.startsWith(`audio/uploads/${userId}/`)) {
+        return next(new AppError('Invalid S3 key', 'INVALID_S3_KEY', 400));
+      }
+
+      const transcribedText = await transcribeAudio({ s3Key: body.s3Key, languageCode: body.language });
+
+      res.json({ transcribedText });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ── POST /api/doubt/solve ──────────────────────────────────────────────────
+
+const solveSchema = z.union([
+  z.object({
+    text: z.string().min(5).max(2000),
+    audioUrl: z.undefined().optional(),
+    subject: z.string().min(1),
+    chapter: z.string().optional(),
+    language: z.enum(['hi', 'en', 'ta', 'te', 'kn', 'mr']).default('hi'),
+  }),
+  z.object({
+    audioUrl: z.string().min(1),
+    text: z.undefined().optional(),
+    subject: z.string().min(1),
+    chapter: z.string().optional(),
+    language: z.enum(['hi', 'en', 'ta', 'te', 'kn', 'mr']).default('hi'),
+  }),
+]);
 
 router.post(
   '/solve',
@@ -27,34 +87,60 @@ router.post(
     try {
       const body = solveSchema.parse(req.body);
       const userId = req.user!.userId;
+      const isVoice = Boolean(body.audioUrl);
 
       const user = await prisma.user.findUnique({ where: { id: userId } });
       if (!user) {
         return next(new AppError('User not found', 'USER_NOT_FOUND', 404));
       }
 
-      // Quota check — text doubts for free tier
       const todayStart = new Date();
       todayStart.setUTCHours(0, 0, 0, 0);
 
-      const todayCount = await prisma.doubt.count({
-        where: {
-          userId,
-          questionAudio: null,
-          createdAt: { gte: todayStart },
-        },
-      });
+      if (isVoice) {
+        // Security: audioUrl must belong to requesting user
+        if (!body.audioUrl!.includes(`audio/uploads/${userId}/`)) {
+          return next(new AppError('Invalid S3 key', 'INVALID_S3_KEY', 400));
+        }
 
-      if (user.tier === 'free' && todayCount >= 5) {
-        const resetAt = new Date();
-        resetAt.setUTCHours(24, 0, 0, 0);
-        return next(
-          new AppError(
-            'Daily doubt limit reached. Upgrade to Plus for unlimited doubts.',
-            'QUOTA_EXCEEDED',
-            429
-          )
-        );
+        // Quota check — voice doubts for free tier (3/day)
+        const voiceCount = await prisma.doubt.count({
+          where: { userId, questionAudio: { not: null }, createdAt: { gte: todayStart } },
+        });
+        if (user.tier === 'free' && voiceCount >= 3) {
+          return next(
+            new AppError(
+              'Daily voice doubt limit reached. Upgrade to Plus for unlimited doubts.',
+              'QUOTA_EXCEEDED',
+              429
+            )
+          );
+        }
+      } else {
+        // Quota check — text doubts for free tier (5/day)
+        const todayCount = await prisma.doubt.count({
+          where: { userId, questionAudio: null, createdAt: { gte: todayStart } },
+        });
+        if (user.tier === 'free' && todayCount >= 5) {
+          return next(
+            new AppError(
+              'Daily doubt limit reached. Upgrade to Plus for unlimited doubts.',
+              'QUOTA_EXCEEDED',
+              429
+            )
+          );
+        }
+      }
+
+      // Transcribe audio if voice input
+      let questionText: string;
+      if (isVoice) {
+        // Extract S3 key from the audioUrl (may be full s3:// URI or just the key)
+        const s3KeyMatch = body.audioUrl!.match(/audio\/uploads\/.+/);
+        const s3Key = s3KeyMatch ? s3KeyMatch[0] : body.audioUrl!;
+        questionText = await transcribeAudio({ s3Key, languageCode: body.language });
+      } else {
+        questionText = body.text!;
       }
 
       // Fetch top 3 weak concepts for this subject
@@ -68,7 +154,7 @@ router.post(
 
       // Call Claude
       const { answer } = await solveDoubt({
-        question: body.text,
+        question: questionText,
         subject: body.subject,
         language: body.language,
         userClass: user.class,
@@ -76,20 +162,25 @@ router.post(
         weakConcepts,
       });
 
+      // Generate TTS audio response
+      const responseAudioUrl = await synthesiseSpeech({ text: answer, languageCode: body.language });
+
       // Store doubt in DB
       const doubt = await prisma.doubt.create({
         data: {
           userId,
-          questionText: body.text,
+          questionText,
+          questionAudio: isVoice ? body.audioUrl! : null,
           subject: body.subject,
           chapter: body.chapter,
           aiResponse: answer,
+          audioResponse: responseAudioUrl,
           conceptsTagged: [],
         },
       });
 
       // Background: tag weakness + update WeaknessMap + update doubt
-      tagWeakness({ question: body.text, explanation: answer })
+      tagWeakness({ question: questionText, explanation: answer })
         .then(async (tag) => {
           if (!tag) return;
 
@@ -144,7 +235,7 @@ router.post(
         doubtId: doubt.id,
         answer,
         conceptsTagged: [],
-        audioUrl: null,
+        audioUrl: responseAudioUrl,
       });
     } catch (err) {
       next(err);
