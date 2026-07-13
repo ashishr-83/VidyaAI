@@ -3,6 +3,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Prisma requires openssl + ca-certificates on Alpine
+RUN apk add --no-cache openssl ca-certificates
+
 # Install deps first (layer cached unless package.json changes)
 COPY package*.json ./
 COPY prisma ./prisma/
@@ -20,6 +23,9 @@ RUN npx prisma generate
 FROM node:20-alpine AS production
 
 WORKDIR /app
+
+# Prisma requires openssl at runtime on Alpine
+RUN apk add --no-cache openssl ca-certificates
 
 # Install only production dependencies
 COPY package*.json ./
