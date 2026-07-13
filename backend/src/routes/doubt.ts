@@ -150,7 +150,7 @@ router.post(
         take: 3,
         select: { concept: true },
       });
-      const weakConcepts = weakMaps.map((w) => w.concept);
+      const weakConcepts = weakMaps.map((w: { concept: string }) => w.concept);
 
       // Call Claude
       const { answer } = await solveDoubt({
