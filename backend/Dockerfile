@@ -24,14 +24,18 @@ FROM node:20-slim AS production
 
 WORKDIR /app
 
+# Install OpenSSL required by Prisma at runtime
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 # Install only production dependencies
 COPY package*.json ./
 COPY prisma ./prisma/
 RUN npm ci --omit=dev && npm cache clean --force
 
-# Copy compiled output and Prisma client from builder
+# Copy compiled output and Prisma client + engines from builder (avoids re-download at runtime)
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
 
 # Copy startup script
 COPY docker-entrypoint.sh ./

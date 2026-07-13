@@ -2,7 +2,7 @@
 set -e
 
 echo "Running Prisma migrations..."
-npx prisma migrate deploy
+NODE_TLS_REJECT_UNAUTHORIZED=0 npx prisma migrate deploy
 
 echo "Starting VidyaAI backend..."
 exec node dist/index.js
