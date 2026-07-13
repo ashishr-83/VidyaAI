@@ -1,10 +1,10 @@
 # ── Stage 1: Builder ──────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Prisma requires openssl + ca-certificates on Alpine
-RUN apk add --no-cache openssl ca-certificates
+# Install OpenSSL required by Prisma
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Install deps first (layer cached unless package.json changes)
 COPY package*.json ./
@@ -16,16 +16,13 @@ COPY tsconfig.json ./
 COPY src ./src/
 RUN npm run build
 
-# Generate Prisma client for production
-RUN npx prisma generate
+# Generate Prisma client — disable TLS verification for corporate proxy environments
+RUN NODE_TLS_REJECT_UNAUTHORIZED=0 npx prisma generate
 
 # ── Stage 2: Production ───────────────────────────────────────────────────────
-FROM node:20-alpine AS production
+FROM node:20-slim AS production
 
 WORKDIR /app
-
-# Prisma requires openssl at runtime on Alpine
-RUN apk add --no-cache openssl ca-certificates
 
 # Install only production dependencies
 COPY package*.json ./
@@ -41,7 +38,7 @@ COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
 # Run as non-root user
-RUN addgroup -S vidyaai && adduser -S vidyaai -G vidyaai
+RUN groupadd -r vidyaai && useradd -r -g vidyaai vidyaai
 USER vidyaai
 
 EXPOSE 3000
