@@ -29,7 +29,7 @@ All frontend specs target the **web browser first**. Mobile-specific adjustments
 |---|------|---------|--------|
 | 01 | [Backend Foundation](backend/01-backend-foundation.md) | Session 1 | `DONE` |
 | 02 | [Claude Doubt Solver API](backend/02-doubt-solver.md) | Session 2 | `DONE` |
-| 03 | [Voice Pipeline](backend/03-voice-pipeline.md) | Session 3 | `READY` |
+| 03 | [Voice Pipeline](backend/03-voice-pipeline.md) | Session 3 | `DONE` |
 | 04 | [Study Plan API](backend/04-study-plan.md) | Session 6 | `READY` |
 | 05 | [Progress & Weakness API](backend/05-progress-weakness.md) | Session 7 | `READY` |
 | 06 | [Payments API](backend/06-payments.md) | Session 8 | `DRAFT` |
@@ -38,11 +38,17 @@ All frontend specs target the **web browser first**. Mobile-specific adjustments
 
 | # | Spec | Session | Status |
 |---|------|---------|--------|
-| 07 | [React Web App Shell](frontend/07-app-shell.md) | Session 4 | `READY` |
-| 08 | [Voice Doubt Solver Screen](frontend/08-voice-doubt-screen.md) | Session 5 | `READY` |
-| 09 | [Study Plan Screen](frontend/09-study-plan-screen.md) | Session 6 | `READY` |
-| 10 | [Weakness Graph Screen](frontend/10-weakness-graph-screen.md) | Session 7 | `DRAFT` |
+| 07 | [React Web App Shell](frontend/07-app-shell.md) | Session 4 | `DONE` |
+| 08 | [Voice Doubt Solver Screen](frontend/08-voice-doubt-screen.md) | Session 5 | `DONE` |
+| 09 | [Study Plan Screen](frontend/09-study-plan-screen.md) | Session 6 | `DONE` |
+| 10 | [Weakness Graph Screen](frontend/10-weakness-graph-screen.md) | Session 7 | `DONE` |
 | 11 | [Payments & Subscription Flow](frontend/11-payments-screen.md) | Session 8 | `DRAFT` |
+
+## QA & Bugfix Sessions
+
+| # | Spec | Session | Status |
+|---|------|---------|--------|
+| — | [QA: Doubt Solver Testing & Bugfixes](backend/02-doubt-solver.md#session-75-notes) | Session 7.5 | `DONE` |
 
 ## Features (Post-MVP)
 

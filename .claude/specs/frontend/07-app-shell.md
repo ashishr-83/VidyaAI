@@ -1,7 +1,9 @@
 # Spec 07 — React Web App Shell
 
-**Status:** `READY`
+**Status:** `DONE`
 **Session:** 4
+**Completed:** 2026-07-07
+**Merged to:** `main`
 **Depends on:** Spec 01 (auth API live), Spec 00-infra (AWS deployment ready)
 
 ---
@@ -172,6 +174,24 @@ All `VITE_*` — baked into the static build. No secrets here.
 - Spec 00-infra (S3 bucket + CloudFront distribution + domain)
 - Firebase project with phone auth enabled (web app config)
 - `VITE_API_URL` pointing to deployed backend
+
+## Implementation Notes
+
+**Pivot:** Built as React web app (`frontend/`) using Vite + React 18 + TypeScript, not React Native. `mobile/` remains a placeholder stub. This was an intentional pivot (web-first MVP before mobile).
+
+**Files created:** All pages (`PhonePage`, `OtpPage`, `OnboardPage`, `HomePage`, `DoubtPage`, `PlanPage`, `ProfilePage`, `WhiteboardPage`), all hooks (`useAuth`, `useLanguage`, `useStorage`, `useNetworkStatus`), all shared components (`Layout`, `AudioPlayer`, `MicButton`, `WeaknessBar`, `StatCard`, `PlanItem`, `SubjectBadge`), `lib/firebase.ts`, `lib/axios.ts`.
+
+**Docker:** `docker-compose.yml` with `frontend`, `backend`, `postgres`, `minio` services. `backend/Dockerfile` uses multi-stage build.
+
+**Auth flow:** Firebase phone OTP → backend `/api/auth/verify-otp` → JWT stored in `localStorage` via `useStorage` hook. `AuthGuard` wraps all protected routes.
+
+**Acceptance criteria status:**
+- [x] App shell boots; routing works; auth guard redirects unauthenticated users
+- [x] Language selection persisted via `useLanguage` / localStorage
+- [ ] S3/CloudFront deployment (AWS infra not yet provisioned — running locally via Docker)
+- [ ] Responsive sidebar → bottom bar at 375px (layout present but not fully tested at breakpoints)
+
+---
 
 ## Phase 2 — Mobile (React Native / Expo)
 

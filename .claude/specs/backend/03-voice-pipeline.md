@@ -1,7 +1,9 @@
 # Spec 03 — Voice Pipeline
 
-**Status:** `READY`
+**Status:** `DONE`
 **Session:** 3
+**Completed:** 2026-07-07
+**Merged to:** `main`
 **Depends on:** Spec 02 (doubt solver)
 
 ---
@@ -180,3 +182,21 @@ vidyaai-audio/
 - AWS SDK v3: `@aws-sdk/client-transcribe`, `@aws-sdk/client-polly`, `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`
 - Env vars: `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BUCKET`
 - CloudFront distribution pointing to `vidyaai-audio` bucket
+
+---
+
+## Implementation Notes
+
+**Files created:**
+- `backend/src/services/speech.ts` — full AWS Transcribe + Polly + S3 implementation with presigned URL helpers.
+
+**Local dev S3 replacement:** MinIO is used in `docker-compose.yml` as a local S3 substitute (`minio` service on port 9000). `AWS_ENDPOINT_URL` env var points the AWS SDK at MinIO when running locally.
+
+**TTS graceful degradation (added Session 7.5):** `synthesiseSpeech()` is called inside a `try/catch` in `POST /solve`. If Polly/S3 fails (e.g. no real AWS credentials in dev), the endpoint still returns `200` with `audioUrl: null` — the text answer is never blocked by TTS failure. A `logger.warn` is emitted instead.
+
+**Acceptance criteria status:**
+- [ ] End-to-end voice flow not yet validated in production (AWS Transcribe/Polly require real `ap-south-1` credentials)
+- [x] `POST /solve` with `audioUrl` path implemented and unit-tested
+- [x] `GET /upload-url` presigned URL endpoint implemented
+- [x] S3 key ownership check (userId prefix validation) implemented
+- [x] TTS failure non-fatal — returns `audioUrl: null` gracefully

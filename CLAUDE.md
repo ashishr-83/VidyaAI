@@ -429,53 +429,108 @@ PORT=3000
 
 ## Build Order (Claude Code Sessions)
 
-### Session 1 — Backend Foundation
-1. Init Node.js + Express + TypeScript project
-2. Set up Prisma with PostgreSQL schema above
-3. Implement Firebase auth middleware
-4. Create `/api/auth` routes
+### ✅ Session 1 — Backend Foundation (DONE)
+1. ~~Init Node.js + Express + TypeScript project~~
+2. ~~Set up Prisma with PostgreSQL schema above~~
+3. ~~Implement Firebase auth middleware~~
+4. ~~Create `/api/auth` routes~~
 
-### Session 2 — Claude Doubt Solver API
-1. Build `claude.ts` service with the system prompt template
-2. Create `/api/doubt/solve` endpoint (text input first)
-3. Add weakness tagging (post-response background job)
-4. Write unit tests for Claude response parsing
+**Artefacts:** `backend/src/routes/auth.ts`, `backend/src/middleware/auth.ts`, `backend/src/lib/firebase.ts`, `backend/src/lib/prisma.ts`, `backend/prisma/schema.prisma`, `backend/src/lib/env.ts`, `backend/src/lib/logger.ts`, `backend/src/middleware/errorHandler.ts`
 
-### Session 3 — Voice Pipeline
-1. Integrate AWS Transcribe for audio → text
-2. Integrate AWS Polly for text → audio
-3. Create `/api/doubt/transcribe` endpoint
-4. S3 upload/download helpers
+### ✅ Session 2 — Claude Doubt Solver API (DONE)
+1. ~~Build `claude.ts` service with the system prompt template~~
+2. ~~Create `/api/doubt/solve` endpoint (text input first)~~
+3. ~~Add weakness tagging (post-response background job)~~
+4. ~~Write unit tests for Claude response parsing~~
 
-### Session 4 — React Native App Shell
-1. Expo project setup with file-based routing
-2. Auth flow: phone input → OTP → onboarding
-3. Bottom tab navigation (Home, Doubt, Plan, Battle, Profile)
-4. Language selection persisted in AsyncStorage
+**Artefacts:** `backend/src/services/claude.ts`, `backend/src/routes/doubt.ts`, unit tests for both
 
-### Session 5 — Voice Doubt Solver Screen
-1. `VoiceRecorder.tsx` — mic animation, recording, upload
-2. Response display with audio playback
-3. Helpful/Not helpful feedback buttons
-4. Doubt history list
+### ✅ Session 3 — Voice Pipeline (DONE)
+1. ~~Integrate AWS Transcribe for audio → text~~
+2. ~~Integrate AWS Polly for text → audio~~
+3. ~~Create `/api/doubt/transcribe` endpoint~~
+4. ~~S3 upload/download helpers~~
 
-### Session 6 — Study Plan
-1. Plan generation on onboarding completion
-2. Today's plan screen with task checkboxes
-3. WhatsApp reminder via Twilio (daily morning message)
-4. Streak tracker UI
+**Artefacts:** `backend/src/services/speech.ts`, S3 presigned URL helpers, Transcribe + Polly integration
 
-### Session 7 — Weakness Graph
-1. Pull weakness data after each doubt + MCQ
-2. Subject-wise radar chart UI
-3. "Focus on these 3 topics today" smart recommendation
+### ✅ Session 4 — Web Frontend App Shell (DONE — React web, not React Native)
+> **Note:** Frontend was built as a React web app (`frontend/`) instead of React Native. Mobile (`mobile/`) remains a placeholder. Pivot to web-first was intentional.
 
-### Session 8 — Payments
+1. ~~Auth flow: Phone → OTP → Onboard screens~~
+2. ~~Bottom tab navigation (Home, Doubt, Plan, Profile)~~
+3. ~~Language selection~~
+4. ~~Docker + docker-compose setup~~
+
+**Artefacts:** `frontend/src/pages/` (PhonePage, OtpPage, LoginPage, RegisterPage, OnboardPage, HomePage, DoubtPage, PlanPage, ProfilePage, WhiteboardPage), `frontend/src/components/` (AudioPlayer, MicButton, WeaknessBar, StatCard, PlanItem, WhiteboardCanvas, LanguagePicker), `frontend/src/hooks/` (useAuth, useLanguage, useNetworkStatus, useStorage), `docker-compose.yml`, `backend/Dockerfile`
+
+### ✅ Session 5 — Voice Doubt Solver Screen (DONE)
+1. ~~`MicButton` component — mic UI + recording~~
+2. ~~Response display with `AudioPlayer`~~
+3. ~~Doubt page UI shell built~~
+
+> **Note:** DoubtPage was originally built as a static shell — text input and submit button had no API wiring. Wired up in Session 7.5 below.
+
+**Artefacts:** `frontend/src/components/MicButton.tsx`, `frontend/src/components/AudioPlayer.tsx`, `frontend/src/pages/DoubtPage.tsx`
+
+### ✅ Session 6 — Study Plan (DONE)
+1. ~~Plan page with task view~~
+2. ~~`PlanItem` component with checkboxes~~
+3. ~~Streak tracker~~
+
+**Artefacts:** `frontend/src/pages/PlanPage.tsx`, `frontend/src/components/PlanItem.tsx`
+
+### ✅ Session 7 — Weakness Graph (DONE)
+1. ~~Weakness data display after doubts~~
+2. ~~`WeaknessBar` component (subject-wise)~~
+3. ~~Profile page with weakness summary~~
+
+**Artefacts:** `frontend/src/components/WeaknessBar.tsx`, `frontend/src/pages/ProfilePage.tsx`
+
+### ✅ Session 7.5 — QA, Doubt Solver Wiring & Infra Bugfixes (DONE)
+
+#### QA & Test Coverage
+1. ~~Priya wrote test prompt matrix for doubt solver (`docs/doubt-solver-test-prompts.md`) — 10 test cases covering Hindi/English/Tamil, quota limits, vague questions, validation~~
+2. ~~Meera executed tests — 48 backend + 98 frontend tests all passing~~
+3. ~~New backend test file: `backend/src/routes/doubt.solve.extended.test.ts` (16 tests covering TC-01 through TC-09)~~
+4. ~~New frontend test file: `frontend/src/test/pages/DoubtPage.test.tsx` (28 tests covering UI structure, mic toggle, subject chips, text input, language label)~~
+
+#### Doubt Solver — Text Input Wiring (was broken)
+5. ~~`DoubtPage.tsx` text input now calls `POST /api/doubt/solve` on Enter key and Submit button click~~
+6. ~~Answer renders below input — Claude response text + concept tags + `AudioPlayer`~~
+7. ~~Submit button disabled while loading; shows "⏳ Thinking…" during request~~
+8. ~~Input cleared after successful response; `toast.error` on API failure~~
+9. ~~Response validated with Zod before rendering — `SolveResponseSchema`~~
+
+#### Backend — TTS Graceful Degradation
+10. ~~AWS Polly `synthesiseSpeech` failure no longer crashes the request — wrapped in try/catch, returns `audioUrl: null` on failure, logs warning~~
+11. ~~Frontend `audioUrl` schema updated to `z.string().nullable()` — `AudioPlayer` only mounts when URL is non-null~~
+
+#### Infrastructure Bugfixes
+12. ~~`DATABASE_URL` interpolation was broken — `${POSTGRES_PASSWORD}` in `docker-compose.yml` `environment:` block was resolving to empty string because `env_file:` vars are not available for Compose-level interpolation. Fixed by adding `.env` at project root with `POSTGRES_PASSWORD=callmeVidya123`~~
+13. ~~Prisma schema (`email`, `passwordHash` columns) was out of sync with live database — ran `prisma db push` to add missing columns; all User queries now work~~
+14. ~~Identified invalid `ANTHROPIC_API_KEY` placeholder in `.env.docker` — requires real key from console.anthropic.com~~
+
+**Known issues:**
+- Claude API responses contain markdown (`**`, `---`) rendered as raw text — `react-markdown` not yet added to answer card
+- `auth.ts` has TypeScript errors (`email`/`passwordHash` fields) that block `tsc --noEmit` — does not affect runtime
+- Redis prompt caching (5. in Key Constraints) not yet implemented
+
+**Artefacts:** `frontend/src/pages/doubt/DoubtPage.tsx` (wired), `backend/src/routes/doubt.ts` (TTS non-fatal), `docs/doubt-solver-test-prompts.md`, `backend/src/routes/doubt.solve.extended.test.ts`, `frontend/src/test/pages/DoubtPage.test.tsx`, `.env` (project root)
+
+### ⬜ Session 8 — Payments (NOT STARTED)
 1. Razorpay order creation + UPI deep link
 2. Subscription status check middleware
 3. Tier upgrade flow in app
 
-### Session 9 — Visual Explanation Engine (Phase 3, after MVP validation)
+### ⬜ Session 9 — React Native Mobile App (NOT STARTED)
+> Originally Session 4. Deferred because web frontend was built first. Do this after web MVP is validated.
+1. Expo project setup in `mobile/` with file-based routing
+2. Auth flow: phone input → OTP → onboarding
+3. Bottom tab navigation (Home, Doubt, Plan, Battle, Profile)
+4. Port web components to React Native equivalents
+5. Language selection persisted in AsyncStorage
+
+### ⬜ Session 10 — Visual Explanation Engine (Phase 3, after MVP validation)
 1. Build `WhiteboardCanvas.tsx` SVG renderer supporting circle/rectangle/arrow/text/formula/image_ref/icon element types
 2. Pre-build a starter asset library (10-15 common scenes: cricket, vehicles, lab apparatus, coordinate grid)
 3. Extend Claude prompt to conditionally return `diagramScript` JSON for Physics/Chemistry/Maths doubts

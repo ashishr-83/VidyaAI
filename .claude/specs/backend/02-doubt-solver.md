@@ -283,3 +283,26 @@ After each solve, in the background (do not await in route handler):
 **Test results:** 19/19 unit tests pass, 14/14 live API tests pass (55 total across session 1+2).
 
 **Infrastructure note:** The AMD proxy gateway used in this environment adds ~5s latency (13–16s total) vs the 8s production target. Set `CLAUDE_TIMEOUT_MS=20000` in non-production environments. Validate ≤8s against live AWS `ap-south-1` before launch.
+
+---
+
+## Session 7.5 Notes
+
+**TTS non-fatal fix** (`backend/src/routes/doubt.ts`): `synthesiseSpeech()` call wrapped in `try/catch` — Polly failure no longer causes a `500`. Response returns `audioUrl: null` and a `logger.warn` is emitted. Frontend `SolveResponseSchema` updated to `audioUrl: z.string().nullable()` accordingly.
+
+**New test file:** `backend/src/routes/doubt.solve.extended.test.ts` — 16 additional tests covering:
+- TC-01: Hindi Physics happy path (Newton's Laws)
+- TC-02: English language switch
+- TC-04: Vague question returns `200` (Claude handles clarification)
+- TC-05: Short text validation + boundary at exactly 5 chars
+- TC-07: Optional `chapter` field
+- TC-08: Free tier quota exhaustion; `plus` tier not blocked
+- TC-09: Tamil language accepted; unsupported language rejected
+- Claude timeout → `502 AI_ERROR`
+- Missing `subject` → `400`
+
+**Total test count after Session 7.5:** 48 backend unit/integration tests pass, 98 frontend tests pass.
+
+**Prisma schema drift fix:** `schema.prisma` had `email`/`passwordHash` fields that were never migrated. Resolved with `prisma db push --accept-data-loss` (dev only). Proper `prisma migrate` files should be created before production deployment.
+
+**DATABASE_URL interpolation fix:** Docker Compose `environment:` block interpolates from `.env` at project root (not from `env_file:`). Created `.env` at repo root containing `POSTGRES_PASSWORD=callmeVidya123` so `${POSTGRES_PASSWORD}` resolves correctly in `DATABASE_URL`.
