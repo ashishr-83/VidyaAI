@@ -112,7 +112,7 @@ services:
       backend:
         condition: service_healthy
     environment:
-      VITE_API_URL: http://vidyaai-backend:3000
+      VITE_API_URL: http://localhost:3000
       VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY:-placeholder}
       VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN:-placeholder}
       VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID:-placeholder}

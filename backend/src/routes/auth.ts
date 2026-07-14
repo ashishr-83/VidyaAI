@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import admin from 'firebase-admin';
 import { prisma } from '../lib/prisma';
 import { env } from '../lib/env';
@@ -15,6 +16,17 @@ const router = Router();
 
 const verifyOtpSchema = z.object({
   idToken: z.string().min(1, 'Firebase ID token is required'),
+});
+
+const registerSchema = z.object({
+  name:     z.string().min(1).max(100),
+  email:    z.string().email(),
+  password: z.string().min(8),
+});
+
+const emailLoginSchema = z.object({
+  email:    z.string().email(),
+  password: z.string().min(1),
 });
 
 const onboardSchema = z.object({
@@ -107,12 +119,84 @@ router.post(
           examDate: data.examDate ? new Date(data.examDate) : null,
           studyHoursPerDay: data.studyHoursPerDay,
         },
-        select: { id: true, name: true, class: true, board: true, language: true, tier: true },
+        select: {
+          id: true, phone: true, name: true, class: true, board: true,
+          language: true, tier: true, examDate: true, studyHoursPerDay: true, createdAt: true,
+        },
       });
 
       logger.info('User onboarded', { userId });
 
       res.json({ user });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * POST /api/auth/register
+ * Creates a new user with email + password, returns JWT.
+ */
+router.post(
+  '/register',
+  authLimiter,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, email, password } = registerSchema.parse(req.body);
+
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (existing) {
+        throw new AppError('Email already registered', 'EMAIL_EXISTS', 409);
+      }
+
+      const passwordHash = await bcrypt.hash(password, 12);
+      const user = await prisma.user.create({
+        data: { name, email, passwordHash, class: 0, board: '', language: 'en', tier: 'free' },
+        select: { id: true, tier: true },
+      });
+
+      const token = signJwt({ userId: user.id, tier: user.tier });
+      logger.info('User registered via email', { userId: user.id });
+      res.status(201).json({ token, isOnboarded: false, userId: user.id });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * POST /api/auth/login
+ * Authenticates a user with email + password, returns JWT.
+ */
+router.post(
+  '/login',
+  authLimiter,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = emailLoginSchema.parse(req.body);
+
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true, phone: true, tier: true, class: true, passwordHash: true },
+      });
+
+      const INVALID = new AppError('Invalid email or password', 'INVALID_CREDENTIALS', 401);
+      if (!user || !user.passwordHash) throw INVALID;
+
+      const match = await bcrypt.compare(password, user.passwordHash);
+      if (!match) throw INVALID;
+
+      const payload: JwtPayload = {
+        userId: user.id,
+        tier: user.tier,
+        ...(user.phone ? { phone: user.phone } : {}),
+      };
+      const token = signJwt(payload);
+      const isOnboarded = user.class > 0;
+
+      logger.info('User logged in via email', { userId: user.id, isOnboarded });
+      res.json({ token, isOnboarded, userId: user.id });
     } catch (err) {
       next(err);
     }

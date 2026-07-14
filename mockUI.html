@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VidyaAI — UI Screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#0a0f1e;color:#fff;overflow-x:hidden;}
+
+/* ─── NAV ─── */
+.screen-nav{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:rgba(10,15,30,0.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;padding:0 24px;height:52px;
+  overflow-x:auto;scrollbar-width:none;gap:0;
+}
+.screen-nav::-webkit-scrollbar{display:none;}
+.nav-tab{
+  padding:0 20px;height:52px;display:flex;align-items:center;
+  font-size:12px;font-weight:600;color:rgba(255,255,255,0.4);
+  cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:all 0.2s;
+}
+.nav-tab:hover{color:rgba(255,255,255,0.75);}
+.nav-tab.active{color:#FF6B00;border-bottom-color:#FF6B00;}
+.nav-brand{
+  font-family:'Poppins',sans-serif;font-size:16px;font-weight:800;
+  color:#fff;margin-right:24px;padding-right:24px;
+  border-right:1px solid rgba(255,255,255,0.1);white-space:nowrap;
+}
+.nav-brand span{color:#FF6B00;}
+
+.screens{padding-top:52px;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ════ SCREEN 1: LOGIN ════ */
+.login-wrap{
+  min-height:calc(100vh - 52px);
+  display:grid;grid-template-columns:1fr 460px;
+  background:linear-gradient(135deg,#0D1B3E 0%,#1a0a3e 100%);
+  position:relative;overflow:hidden;
+}
+.glow{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;}
+.glow-a{width:500px;height:500px;background:#FF6B00;opacity:0.05;top:-200px;left:-100px;}
+.glow-b{width:600px;height:600px;background:#6B00FF;opacity:0.06;bottom:-200px;right:-100px;}
+.glow-c{width:300px;height:300px;background:#00C4FF;opacity:0.04;top:50%;left:40%;}
+
+/* Animated bg SVG */
+.bg-art{position:absolute;inset:0;width:100%;height:100%;opacity:0.07;pointer-events:none;}
+
+.login-left{
+  padding:56px 64px;display:flex;flex-direction:column;
+  justify-content:center;position:relative;z-index:2;
+}
+.ll-logo{display:flex;align-items:center;gap:12px;margin-bottom:52px;}
+.ll-logo-mark{
+  width:46px;height:46px;border-radius:13px;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;box-shadow:0 8px 24px rgba(255,107,0,0.45);
+}
+.ll-logo-text{font-family:'Poppins',sans-serif;font-size:24px;font-weight:800;color:#fff;}
+.ll-logo-text span{color:#FF6B00;}
+
+.ll-tagline{
+  font-family:'Poppins',sans-serif;
+  font-size:clamp(30px,3.5vw,52px);font-weight:900;
+  line-height:1.08;letter-spacing:-1.5px;color:#fff;margin-bottom:18px;
+}
+.ll-tagline em{
+  font-style:normal;
+  background:linear-gradient(90deg,#FF6B00,#FFD600);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ll-sub{
+  font-size:15px;color:rgba(255,255,255,0.5);line-height:1.75;
+  max-width:420px;margin-bottom:44px;
+}
+.ll-stats{display:flex;gap:40px;margin-bottom:44px;}
+.ls-item .num{
+  font-family:'Poppins',sans-serif;font-size:30px;font-weight:900;
+  color:#fff;line-height:1;
+}
+.ls-item .num em{font-style:normal;color:#FF6B00;}
+.ls-item .lbl{font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;font-weight:500;}
+
+.ll-testimonial{
+  display:flex;gap:14px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;padding:16px;max-width:420px;
+  backdrop-filter:blur(8px);
+}
+.lt-avatar{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#1B8A4E,#43A047);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.lt-text .name{font-size:12px;font-weight:700;color:#fff;margin-bottom:3px;}
+.lt-text .quote{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5;}
+.lt-text .stars{color:#FF6B00;font-size:11px;margin-top:5px;}
+
+/* Right form */
+.login-right{
+  background:rgba(255,255,255,0.03);
+  border-left:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;
+  padding:48px 44px;position:relative;z-index:2;
+  backdrop-filter:blur(20px);
+}
+.form-box{width:100%;max-width:340px;}
+.fb-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:#FF6B00;margin-bottom:8px;
+}
+.fb-title{
+  font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;
+  color:#fff;letter-spacing:-0.5px;margin-bottom:5px;
+}
+.fb-sub{font-size:13px;color:rgba(255,255,255,0.38);margin-bottom:28px;line-height:1.5;}
+
+.inp-group{margin-bottom:14px;}
+.inp-label{
+  display:block;font-size:10px;font-weight:700;letter-spacing:0.5px;
+  text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:7px;
+}
+.inp-wrap{position:relative;}
+.inp-prefix{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:15px;opacity:0.35;
+}
+.inp{
+  width:100%;height:50px;
+  background:rgba(255,255,255,0.05);
+  border:1.5px solid rgba(255,255,255,0.09);
+  border-radius:12px;padding:0 14px 0 44px;
+  font-size:14px;color:#fff;font-family:'Inter',sans-serif;
+  outline:none;transition:all 0.2s;
+}
+.inp::placeholder{color:rgba(255,255,255,0.18);}
+.inp:focus{border-color:#FF6B00;background:rgba(255,107,0,0.07);}
+.inp-suffix{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:14px;opacity:0.3;cursor:pointer;
+}
+.form-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.remember{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.4);}
+.chk{width:17px;height:17px;border-radius:4px;border:1.5px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:9px;color:#FF6B00;}
+.forgot{font-size:12px;color:#FF6B00;font-weight:600;text-decoration:none;cursor:pointer;}
+
+.btn-main{
+  width:100%;height:50px;border-radius:12px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);
+  font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:#fff;
+  box-shadow:0 6px 24px rgba(255,107,0,0.35);margin-bottom:18px;
+  letter-spacing:0.2px;transition:transform 0.15s,box-shadow 0.15s;
+}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(255,107,0,0.45);}
+
+.div-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.div-line{flex:1;height:1px;background:rgba(255,255,255,0.07);}
+.div-text{font-size:11px;color:rgba(255,255,255,0.2);}
+
+.btn-alt{
+  width:100%;height:46px;border-radius:11px;
+  border:1.5px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;
+  font-family:'Inter',sans-serif;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  transition:all 0.2s;margin-bottom:10px;
+}
+.btn-alt:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+
+.signup-txt{text-align:center;font-size:12px;color:rgba(255,255,255,0.3);margin-top:18px;}
+.signup-txt a{color:#FF6B00;font-weight:700;text-decoration:none;}
+
+/* ════ SHARED APP SHELL ════ */
+.app{display:flex;min-height:calc(100vh - 52px);background:#F5F7FF;}
+.sidebar{
+  width:224px;flex-shrink:0;background:#0D1B3E;
+  display:flex;flex-direction:column;padding:20px 0;
+}
+.sb-logo{
+  display:flex;align-items:center;gap:10px;
+  padding:0 18px 22px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:14px;
+}
+.sb-lm{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.sb-lt{font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:#fff;}
+.sb-lt span{color:#FF6B00;}
+
+.sb-sec{padding:0 10px;margin-bottom:6px;}
+.sb-sec-lbl{
+  font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  color:rgba(255,255,255,0.18);padding:0 8px;margin-bottom:5px;
+}
+.sb-item{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;
+  font-size:13px;font-weight:500;color:rgba(255,255,255,0.45);
+  cursor:pointer;transition:all 0.15s;margin-bottom:1px;
+}
+.sb-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.8);}
+.sb-item.on{background:rgba(255,107,0,0.15);color:#FF8C42;font-weight:600;}
+.sb-ic{font-size:16px;width:20px;text-align:center;}
+.sb-badge{
+  margin-left:auto;background:#FF6B00;color:#fff;
+  font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;
+}
+.sb-foot{margin-top:auto;padding:0 10px;}
+.sb-user{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 10px;border-radius:10px;background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.06);
+}
+.sb-av{
+  width:33px;height:33px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.sb-un{font-size:12px;font-weight:700;color:#fff;}
+.sb-uc{font-size:10px;color:rgba(255,255,255,0.3);margin-top:1px;}
+
+.main{flex:1;overflow-y:auto;padding:28px 30px;min-width:0;}
+.pg-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;}
+.pg-head-l h2{
+  font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;
+  color:#0D1B3E;letter-spacing:-0.3px;
+}
+.pg-head-l p{font-size:13px;color:#9CA3AF;margin-top:3px;}
+.pg-head-r{display:flex;gap:10px;}
+.btn-p{
+  padding:10px 18px;border-radius:10px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);
+  font-size:13px;font-weight:700;color:#fff;
+  box-shadow:0 4px 14px rgba(255,107,0,0.3);
+  display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;
+}
+.btn-g{
+  padding:10px 16px;border-radius:10px;
+  border:1.5px solid #E5E7EB;background:#fff;
+  font-size:13px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;
+}
+
+/* Stat row */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.sc{
+  background:#fff;border-radius:14px;padding:17px 18px;
+  border:1px solid #E5E7EB;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+.sc-top2{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sc-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.ic-o{background:rgba(255,107,0,0.1);}
+.ic-b{background:rgba(57,73,171,0.1);}
+.ic-g{background:rgba(27,138,78,0.1);}
+.ic-pu{background:rgba(107,0,255,0.1);}
+.sc-tr{font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;}
+.tr-up{background:#DCFCE7;color:#166534;}
+.tr-dn{background:#FEF2F2;color:#991B1B;}
+.sc-n{font-family:'Poppins',sans-serif;font-size:26px;font-weight:900;color:#0D1B3E;letter-spacing:-0.5px;}
+.sc-l{font-size:12px;color:#9CA3AF;margin-top:2px;}
+
+/* Grid */
+.grid2{display:grid;grid-template-columns:1fr 340px;gap:18px;}
+
+/* Cards */
+.card{
+  background:#fff;border-radius:14px;
+  border:1px solid #E5E7EB;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  overflow:hidden;margin-bottom:18px;
+}
+.card:last-child{margin-bottom:0;}
+.ch{
+  padding:14px 18px;border-bottom:1px solid #F3F4F6;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ct{font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:#0D1B3E;}
+.ca{font-size:12px;font-weight:600;color:#FF6B00;cursor:pointer;}
+.cb{padding:18px;}
+
+/* Doubt hero */
+.dh{
+  background:linear-gradient(135deg,#0D1B3E 0%,#1a237e 100%);
+  border-radius:14px;padding:22px;margin-bottom:18px;position:relative;overflow:hidden;
+}
+.dh::after{content:'🎤';font-size:100px;position:absolute;right:-10px;top:-15px;opacity:0.06;pointer-events:none;}
+.dh-ey{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:7px;}
+.dh-t{font-family:'Poppins',sans-serif;font-size:19px;font-weight:800;color:#fff;margin-bottom:4px;}
+.dh-s{font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px;}
+.dh-row{display:flex;gap:10px;}
+.btn-mic2{
+  display:flex;align-items:center;gap:8px;padding:11px 18px;border-radius:10px;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);border:none;cursor:pointer;
+  font-size:13px;font-weight:700;color:#fff;font-family:'Inter',sans-serif;
+  box-shadow:0 4px 14px rgba(255,107,0,0.4);
+}
+.btn-t2{
+  display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:10px;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+  cursor:pointer;font-size:13px;font-weight:600;
+  color:rgba(255,255,255,0.65);font-family:'Inter',sans-serif;
+}
+
+/* Subject chips */
+.schips{display:flex;gap:8px;flex-wrap:wrap;}
+.schip{
+  padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1.5px solid;transition:all 0.15s;
+}
+.schip-p{border-color:rgba(57,73,171,0.25);color:#3949AB;background:rgba(57,73,171,0.06);}
+.schip-c{border-color:rgba(27,138,78,0.25);color:#1B8A4E;background:rgba(27,138,78,0.06);}
+.schip-m{border-color:rgba(255,107,0,0.25);color:#FF6B00;background:rgba(255,107,0,0.06);}
+.schip-b{border-color:rgba(107,0,255,0.25);color:#6B00FF;background:rgba(107,0,255,0.06);}
+
+/* Doubt items */
+.di{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid #F3F4F6;}
+.di:last-child{border-bottom:none;padding-bottom:0;}
+.di-s{padding:3px 7px;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
+.ds-phy{background:rgba(57,73,171,0.1);color:#3949AB;}
+.ds-che{background:rgba(27,138,78,0.1);color:#1B8A4E;}
+.ds-mat{background:rgba(255,107,0,0.1);color:#FF6B00;}
+.di-q{font-size:13px;color:#374151;flex:1;line-height:1.4;}
+.di-m{font-size:10px;color:#9CA3AF;margin-top:3px;}
+.di-arr{color:#9CA3AF;font-size:14px;padding-top:2px;}
+
+/* Plan items */
+.plan-today{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.pt-badge{padding:4px 10px;border-radius:20px;background:rgba(255,107,0,0.1);color:#FF6B00;font-size:11px;font-weight:700;}
+.pt-date{font-size:12px;color:#9CA3AF;}
+.pi{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;
+  border-radius:10px;margin-bottom:7px;border:1.5px solid #E5E7EB;background:#FAFAFA;
+}
+.pi.done{border-color:#DCFCE7;background:#F0FDF4;}
+.pi-ck{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.ck-done{background:#1B8A4E;color:#fff;}
+.ck-todo{border:2px solid #D1D5DB;background:#fff;}
+.pi-sub{font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.4px;}
+.pi-top{font-size:12px;font-weight:600;color:#111827;margin-top:1px;}
+.pi-dur{margin-left:auto;font-size:11px;color:#9CA3AF;white-space:nowrap;flex-shrink:0;}
+.pi-typ{font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;text-transform:uppercase;flex-shrink:0;}
+.typ-l{background:rgba(57,73,171,0.1);color:#3949AB;}
+.typ-r{background:rgba(249,168,37,0.12);color:#B45309;}
+.typ-p{background:rgba(255,107,0,0.1);color:#FF6B00;}
+
+/* Weakness */
+.wl{display:flex;flex-direction:column;gap:11px;}
+.wi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.wi-c{font-size:12px;font-weight:600;color:#374151;}
+.wi-sc{font-size:11px;font-weight:700;}
+.wi-w{color:#DC2626;}.wi-m{color:#D97706;}.wi-s{color:#1B8A4E;}
+.wbar{height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden;}
+.wfill{height:100%;border-radius:3px;}
+.wf-w{background:linear-gradient(90deg,#FCA5A5,#DC2626);}
+.wf-m{background:linear-gradient(90deg,#FCD34D,#D97706);}
+.wf-s{background:linear-gradient(90deg,#6EE7B7,#1B8A4E);}
+
+/* Streak */
+.streak{
+  background:linear-gradient(135deg,#1B8A4E,#15803D);
+  border-radius:14px;padding:18px;display:flex;align-items:center;
+  gap:14px;margin-bottom:16px;
+}
+.streak-n{font-family:'Poppins',sans-serif;font-size:44px;font-weight:900;color:#fff;line-height:1;}
+.streak-i .t{font-size:13px;font-weight:700;color:#fff;}
+.streak-i .s{font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;}
+.streak-em{font-size:36px;margin-left:auto;}
+
+/* ════ SCREEN 3: DOUBT SOLVER ════ */
+.vd-top{
+  background:#fff;border-bottom:1px solid #E5E7EB;
+  padding:14px 28px;display:flex;align-items:center;gap:12px;
+}
+.vd-back{
+  width:34px;height:34px;border-radius:50%;border:1.5px solid #E5E7EB;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;color:#374151;
+}
+.vd-title{font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:#0D1B3E;}
+.vd-sub{font-size:12px;color:#9CA3AF;margin-top:1px;}
+.lang-btn{
+  margin-left:auto;padding:7px 14px;border-radius:20px;
+  border:1.5px solid #E5E7EB;background:#fff;
+  font-size:12px;font-weight:700;color:#374151;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+}
+.vd-body{
+  flex:1;display:grid;grid-template-columns:1fr 360px;
+  padding:28px;gap:22px;max-width:1100px;width:100%;margin:0 auto;
+}
+.rec-card{
+  background:#fff;border-radius:18px;border:1px solid #E5E7EB;
+  display:flex;flex-direction:column;align-items:center;
+  padding:40px 36px;text-align:center;
+}
+.rec-chips{display:flex;gap:8px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;}
+.rchip{
+  padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:all 0.15s;
+}
+.rchip-on{background:#0D1B3E;color:#fff;}
+.rchip-phy{background:rgba(57,73,171,0.1);color:#3949AB;}
+.rchip-che{background:rgba(27,138,78,0.1);color:#1B8A4E;}
+.rchip-mat{background:rgba(255,107,0,0.1);color:#FF6B00;}
+.rchip-bio{background:#F3F4F6;color:#9CA3AF;}
+
+.big-mic{
+  width:118px;height:118px;border-radius:50%;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);
+  display:flex;align-items:center;justify-content:center;font-size:50px;
+  cursor:pointer;margin-bottom:24px;
+  box-shadow:
+    0 0 0 20px rgba(255,107,0,0.07),
+    0 0 0 42px rgba(255,107,0,0.03),
+    0 16px 48px rgba(255,107,0,0.35);
+  transition:transform 0.2s;
+}
+.big-mic:hover{transform:scale(1.05);}
+.rec-title{font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:#0D1B3E;margin-bottom:6px;}
+.rec-sub{font-size:13px;color:#9CA3AF;margin-bottom:28px;line-height:1.6;}
+.or-r{display:flex;align-items:center;gap:12px;width:100%;margin-bottom:18px;}
+.or-l{flex:1;height:1px;background:#E5E7EB;}
+.or-t{font-size:11px;color:#9CA3AF;}
+.type-inp{
+  width:100%;padding:13px 16px;border-radius:12px;
+  border:1.5px solid #E5E7EB;background:#F9FAFB;
+  font-size:14px;color:#374151;outline:none;
+  font-family:'Inter',sans-serif;transition:border-color 0.2s;
+}
+.type-inp:focus{border-color:#FF6B00;background:#fff;}
+.type-inp::placeholder{color:#D1D5DB;}
+.rec-btns{display:flex;gap:10px;margin-top:14px;width:100%;}
+.rb-main{
+  flex:1;padding:12px;border-radius:11px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);color:#fff;
+  font-size:13px;font-weight:700;box-shadow:0 4px 14px rgba(255,107,0,0.3);
+}
+.rb-sec{
+  flex:1;padding:12px;border-radius:11px;
+  border:1.5px solid #E5E7EB;background:#fff;color:#374151;
+  font-size:13px;font-weight:600;cursor:pointer;
+}
+.vd-right{display:flex;flex-direction:column;gap:14px;}
+.tip-box{
+  background:linear-gradient(135deg,#0D1B3E,#1a237e);
+  border-radius:14px;padding:20px;color:#fff;
+}
+.tip-ic{font-size:26px;margin-bottom:8px;}
+.tip-t{font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;margin-bottom:5px;}
+.tip-s{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.65;}
+.up-box{
+  padding:16px;background:#F0FDF4;border-radius:12px;
+  border:1.5px solid #DCFCE7;
+}
+.up-t{font-size:12px;font-weight:700;color:#1B8A4E;margin-bottom:4px;}
+.up-s{font-size:11px;color:#166534;line-height:1.55;}
+.btn-up{
+  margin-top:10px;width:100%;padding:9px;border-radius:9px;
+  border:none;background:#1B8A4E;color:#fff;
+  font-size:12px;font-weight:700;cursor:pointer;
+}
+
+/* ════ SCREEN 4: WHITEBOARD ════ */
+.wb-wrap{display:flex;flex-direction:column;min-height:calc(100vh - 52px);}
+.wb-top2{
+  background:#0D1B3E;padding:14px 28px;
+  display:flex;align-items:center;gap:14px;flex-shrink:0;
+}
+.wb-back2{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:#fff;cursor:pointer;
+}
+.wb-info{flex:1;}
+.wb-subj{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:3px;}
+.wb-q{font-size:14px;font-weight:700;color:#fff;}
+.wb-live{
+  display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;
+  background:linear-gradient(135deg,#FF6B00,#FF9800);
+  font-size:11px;font-weight:700;color:#fff;
+  box-shadow:0 4px 12px rgba(255,107,0,0.4);
+}
+.live-d{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+.wb-body{flex:1;display:grid;grid-template-columns:1fr 360px;}
+
+/* Canvas area */
+.wb-canvas{
+  background:#FAFCFF;border-right:1px solid #E5E7EB;
+  position:relative;display:flex;align-items:center;justify-content:center;
+  min-height:480px;
+}
+.wb-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(13,27,62,0.04) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(13,27,62,0.04) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.wb-steps2{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;z-index:4;
+}
+.wsd{width:8px;height:8px;border-radius:50%;background:#E5E7EB;}
+.wsd.done{background:#1B8A4E;}
+.wsd.now{background:#FF6B00;box-shadow:0 0 0 3px rgba(255,107,0,0.2);}
+.wb-slbl{position:absolute;top:12px;right:16px;font-size:11px;font-weight:700;color:#9CA3AF;}
+.wb-svg2{width:90%;max-width:540px;position:relative;z-index:1;}
+
+/* Animations */
+@keyframes sIn{from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);}}
+@keyframes fUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes drw{from{stroke-dashoffset:300;}to{stroke-dashoffset:0;}}
+@keyframes pop{from{opacity:0;transform:scale(0.5);}to{opacity:1;transform:scale(1);}}
+@keyframes ballGo{0%{transform:translateX(0);}50%{transform:translateX(50px);}100%{transform:translateX(0);}}
+.an-si{animation:sIn 0.7s ease forwards;}
+.an-fu{animation:fUp 0.7s ease forwards;}
+.an-dr{stroke-dasharray:300;animation:drw 1.2s ease forwards;}
+.an-po{animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards;}
+.an-bl{animation:ballGo 3s ease-in-out infinite;}
+
+/* Right transcript panel */
+.wb-right2{display:flex;flex-direction:column;background:#fff;}
+.wb-tr{flex:1;padding:20px;overflow-y:auto;}
+.tr-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px;}
+.tr-body{font-size:13px;color:#374151;line-height:1.85;}
+.hl{background:linear-gradient(135deg,rgba(255,107,0,0.1),rgba(255,152,0,0.06));color:#C2410C;font-weight:600;border-radius:3px;padding:0 3px;}
+
+.wb-audio{padding:16px 20px;border-top:1px solid #F3F4F6;background:#FAFAFA;flex-shrink:0;}
+.a-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.a-play{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:#0D1B3E;color:#fff;font-size:13px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.a-track2{flex:1;height:4px;background:#E5E7EB;border-radius:2px;position:relative;cursor:pointer;}
+.a-fill2{height:100%;width:44%;background:linear-gradient(90deg,#FF6B00,#FF9800);border-radius:2px;}
+.a-dot2{
+  position:absolute;left:44%;top:50%;transform:translate(-50%,-50%);
+  width:12px;height:12px;border-radius:50%;background:#FF6B00;
+  box-shadow:0 0 0 3px rgba(255,107,0,0.2);
+}
+.a-time{font-size:11px;color:#9CA3AF;flex-shrink:0;}
+.a-bottom{display:flex;align-items:center;justify-content:space-between;}
+.a-lang{font-size:11px;color:#9CA3AF;display:flex;align-items:center;gap:5px;}
+.fb-row{display:flex;gap:8px;}
+.fb-b{
+  padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1.5px solid #E5E7EB;background:#fff;color:#6B7280;
+  display:flex;align-items:center;gap:4px;
+}
+.fb-b.ok{border-color:rgba(27,138,78,0.3);color:#1B8A4E;background:rgba(27,138,78,0.06);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="screen-nav">
+  <div class="nav-brand">Vidya<span>AI</span></div>
+  <div class="nav-tab active" onclick="show('s1',this)">🔐 Login Page</div>
+  <div class="nav-tab" onclick="show('s2',this)">🏠 Dashboard</div>
+  <div class="nav-tab" onclick="show('s3',this)">🎤 Doubt Solver</div>
+  <div class="nav-tab" onclick="show('s4',this)">✨ Whiteboard Answer</div>
+</nav>
+
+<div class="screens">
+
+<!-- ══════════════ SCREEN 1: LOGIN ══════════════ -->
+<div id="s1" class="screen active">
+<div class="login-wrap">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="glow glow-c"></div>
+
+  <!-- Animated bg art -->
+  <svg class="bg-art" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <!-- Physics: moving ball + velocity arrow -->
+    <circle cx="120" cy="220" r="20" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="126" stroke-dashoffset="126">
+      <animate attributeName="stroke-dashoffset" from="126" to="0" dur="1.8s" fill="freeze" begin="0.3s"/>
+    </circle>
+    <text x="120" y="226" text-anchor="middle" font-size="13" fill="#fff" opacity="0">
+      <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="1.5s"/>⚽
+    </text>
+    <line x1="144" y1="220" x2="230" y2="220" stroke="#fff" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="100">
+      <animate attributeName="stroke-dashoffset" from="100" to="0" dur="1.2s" fill="freeze" begin="1.5s"/>
+    </line>
+    <text x="178" y="210" font-size="14" fill="#FF9800" opacity="0">
+      <animate attributeName="opacity" from="0" to="0.9" dur="0.5s" fill="freeze" begin="2.5s"/>v →
+    </text>
+    <text x="76" y="294" font-family="serif" font-size="18" fill="#FF6B00" opacity="0">
+      <animate attributeName="opacity" from="0" to="0.85" dur="0.8s" fill="freeze" begin="2.8s"/>p = m × v
+    </text>
+
+    <!-- Chemistry: H2O molecule -->
+    <g transform="translate(580,520)">
+      <circle cx="50" cy="60" r="26" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="165" stroke-dashoffset="165">
+        <animate attributeName="stroke-dashoffset" from="165" to="0" dur="1.5s" fill="freeze" begin="1s"/>
+      </circle>
+      <circle cx="6" cy="22" r="17" fill="none" stroke="#FF9800" stroke-width="2" stroke-dasharray="108" stroke-dashoffset="108">
+        <animate attributeName="stroke-dashoffset" from="108" to="0" dur="1.2s" fill="freeze" begin="2s"/>
+      </circle>
+      <circle cx="94" cy="22" r="17" fill="none" stroke="#FF9800" stroke-width="2" stroke-dasharray="108" stroke-dashoffset="108">
+        <animate attributeName="stroke-dashoffset" from="108" to="0" dur="1.2s" fill="freeze" begin="2.2s"/>
+      </circle>
+      <line x1="50" y1="35" x2="18" y2="30" stroke="#fff" stroke-width="2" opacity="0">
+        <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="2.8s"/>
+      </line>
+      <line x1="50" y1="35" x2="82" y2="30" stroke="#fff" stroke-width="2" opacity="0">
+        <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="2.8s"/>
+      </line>
+      <text x="50" y="68" text-anchor="middle" font-size="15" fill="#fff" font-weight="700" opacity="0">
+        <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="3.2s"/>O
+      </text>
+      <text x="4" y="24" font-size="14" fill="#FF9800" font-weight="700" opacity="0">
+        <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="3.2s"/>H
+      </text>
+      <text x="92" y="24" font-size="14" fill="#FF9800" font-weight="700" opacity="0">
+        <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="3.2s"/>H
+      </text>
+    </g>
+
+    <!-- Maths: coordinate system with function -->
+    <g transform="translate(870,60)">
+      <line x1="0" y1="200" x2="0" y2="0" stroke="#fff" stroke-width="2" stroke-dasharray="200" stroke-dashoffset="200">
+        <animate attributeName="stroke-dashoffset" from="200" to="0" dur="1.2s" fill="freeze" begin="1s"/>
+      </line>
+      <line x1="0" y1="200" x2="220" y2="200" stroke="#fff" stroke-width="2" stroke-dasharray="220" stroke-dashoffset="220">
+        <animate attributeName="stroke-dashoffset" from="220" to="0" dur="1.2s" fill="freeze" begin="1s"/>
+      </line>
+      <path d="M10,150 Q40,80 70,150 Q100,220 130,150 Q160,80 190,150" fill="none" stroke="#FF9800" stroke-width="2.5" stroke-dasharray="350" stroke-dashoffset="350">
+        <animate attributeName="stroke-dashoffset" from="350" to="0" dur="2s" fill="freeze" begin="2s"/>
+      </path>
+      <text x="100" y="230" text-anchor="middle" font-size="13" fill="#fff" opacity="0">
+        <animate attributeName="opacity" from="0" to="0.9" dur="0.5s" fill="freeze" begin="3.5s"/>y = sin(x)
+      </text>
+    </g>
+
+    <!-- Geometry triangle -->
+    <g transform="translate(300,500)">
+      <path d="M0,120 L100,120 L50,20 Z" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="360" stroke-dashoffset="360">
+        <animate attributeName="stroke-dashoffset" from="360" to="0" dur="2s" fill="freeze" begin="1.5s"/>
+      </path>
+      <text x="50" y="142" text-anchor="middle" font-size="12" fill="#fff" opacity="0">
+        <animate attributeName="opacity" from="0" to="0.8" dur="0.5s" fill="freeze" begin="3.2s"/>Base = a
+      </text>
+      <text x="8" y="75" font-size="12" fill="#FF9800" opacity="0">
+        <animate attributeName="opacity" from="0" to="0.8" dur="0.5s" fill="freeze" begin="3.2s"/>h
+      </text>
+    </g>
+  </svg>
+
+  <!-- LEFT -->
+  <div class="login-left">
+    <div class="ll-logo">
+      <div class="ll-logo-mark">🎓</div>
+      <div class="ll-logo-text">Vidya<span>AI</span></div>
+    </div>
+    <div class="ll-tagline">
+      Apna personal<br><em>IIT tutor</em><br>pocket mein.
+    </div>
+    <div class="ll-sub">
+      Voice se doubt poochho, animated whiteboard pe samjho — Hindi ya apni bhasha mein. Class 6 se NEET/JEE tak, 24/7 available.
+    </div>
+    <div class="ll-stats">
+      <div class="ls-item">
+        <div class="num">50K<em>+</em></div>
+        <div class="lbl">Active Students</div>
+      </div>
+      <div class="ls-item">
+        <div class="num">2M<em>+</em></div>
+        <div class="lbl">Doubts Solved</div>
+      </div>
+      <div class="ls-item">
+        <div class="num">6<em>+</em></div>
+        <div class="lbl">Languages</div>
+      </div>
+    </div>
+    <div class="ll-testimonial">
+      <div class="lt-avatar">😊</div>
+      <div class="lt-text">
+        <div class="name">Rahul S. — JEE Aspirant, Lucknow</div>
+        <div class="quote">"Pehle physics doubts ke saath raat bhar jaagta tha. Ab VidyaAI 5 second mein samjha deta hai — whiteboard pe!"</div>
+        <div class="stars">★★★★★</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT FORM -->
+  <div class="login-right">
+    <div class="form-box">
+      <div class="fb-eyebrow">Student Portal</div>
+      <div class="fb-title">Login Karo</div>
+      <div class="fb-sub">Apni padhai continue karo — 2M+ doubts already solve ho chuke hain 📚</div>
+
+      <div class="inp-group">
+        <label class="inp-label">Email / Phone Number</label>
+        <div class="inp-wrap">
+          <div class="inp-prefix">👤</div>
+          <input class="inp" type="text" placeholder="email@example.com ya 9876543210">
+        </div>
+      </div>
+
+      <div class="inp-group">
+        <label class="inp-label">Password</label>
+        <div class="inp-wrap">
+          <div class="inp-prefix">🔒</div>
+          <input class="inp" type="password" placeholder="Apna password enter karo">
+          <div class="inp-suffix">👁</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="remember">
+          <div class="chk">✓</div>
+          <span>Mujhe yaad rakho</span>
+        </div>
+        <div class="forgot">Password bhool gaye?</div>
+      </div>
+
+      <button class="btn-main">🚀 Login Karo</button>
+
+      <div class="div-row">
+        <div class="div-line"></div>
+        <div class="div-text">ya isse login karo</div>
+        <div class="div-line"></div>
+      </div>
+
+      <button class="btn-alt">📱 Phone OTP se Login</button>
+      <button class="btn-alt" style="color:rgba(255,255,255,0.3);">🌐 Google se Login</button>
+
+      <div class="signup-txt">
+        Naya student? <a href="#">Abhi free mein register karo →</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /s1 -->
+
+<!-- ══════════════ SCREEN 2: DASHBOARD ══════════════ -->
+<div id="s2" class="screen">
+<div class="app">
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-lm">🎓</div>
+      <div class="sb-lt">Vidya<span>AI</span></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Main</div>
+      <div class="sb-item on"><div class="sb-ic">🏠</div>Dashboard</div>
+      <div class="sb-item"><div class="sb-ic">🎤</div>Doubt Solver<div class="sb-badge">3</div></div>
+      <div class="sb-item"><div class="sb-ic">📅</div>Study Plan</div>
+      <div class="sb-item"><div class="sb-ic">📊</div>Progress</div>
+      <div class="sb-item"><div class="sb-ic">⚔️</div>Battles</div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Resources</div>
+      <div class="sb-item"><div class="sb-ic">📄</div>Past Papers</div>
+      <div class="sb-item"><div class="sb-ic">✍️</div>Answer Coach</div>
+      <div class="sb-item"><div class="sb-ic">🔖</div>Bookmarks</div>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-av">R</div>
+        <div>
+          <div class="sb-un">Rahul Singh</div>
+          <div class="sb-uc">Class 12 · JEE · Plus ✨</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="pg-head">
+      <div class="pg-head-l">
+        <h2>Namaste, Rahul! 👋</h2>
+        <p>Monday, 14 July — Aaj 3 topics cover karne hain</p>
+      </div>
+      <div class="pg-head-r">
+        <button class="btn-g">📊 Weekly Report</button>
+        <button class="btn-p">🎤 Doubt Poochho</button>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="sc">
+        <div class="sc-top2">
+          <div class="sc-ic ic-o">🔥</div>
+          <div class="sc-tr tr-up">↑ 2 days</div>
+        </div>
+        <div class="sc-n">12</div>
+        <div class="sc-l">Day Streak</div>
+      </div>
+      <div class="sc">
+        <div class="sc-top2">
+          <div class="sc-ic ic-b">🎤</div>
+          <div class="sc-tr tr-up">+8 today</div>
+        </div>
+        <div class="sc-n">247</div>
+        <div class="sc-l">Doubts Solved</div>
+      </div>
+      <div class="sc">
+        <div class="sc-top2">
+          <div class="sc-ic ic-g">⏱</div>
+          <div class="sc-tr tr-up">On track</div>
+        </div>
+        <div class="sc-n">4.2h</div>
+        <div class="sc-l">Studied Today</div>
+      </div>
+      <div class="sc">
+        <div class="sc-top2">
+          <div class="sc-ic ic-pu">🎯</div>
+          <div class="sc-tr tr-dn">180 days left</div>
+        </div>
+        <div class="sc-n" style="font-size:22px;">68<span style="font-size:15px;color:#9CA3AF;">%</span></div>
+        <div class="sc-l">Syllabus Done</div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="dh">
+          <div class="dh-ey">Quick Action</div>
+          <div class="dh-t">Koi doubt hai? Abhi poochho</div>
+          <div class="dh-s">Hindi, English, Tamil, Telugu, Kannada, Marathi — koi bhi bhasha chalegi</div>
+          <div class="dh-row">
+            <button class="btn-mic2">🎤 Bolke Poochho</button>
+            <button class="btn-t2">⌨️ Type Karo</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ch">
+            <div class="ct">Recent Doubts</div>
+            <div class="ca">Sab dekho →</div>
+          </div>
+          <div class="cb" style="padding:12px 18px;">
+            <div class="di">
+              <div class="di-s ds-phy">Physics</div>
+              <div style="flex:1;">
+                <div class="di-q">Momentum aur Impulse mein kya fark hai?</div>
+                <div class="di-m">2 ghante pehle · Laws of Motion · ✨ Whiteboard generated</div>
+              </div>
+              <div class="di-arr">›</div>
+            </div>
+            <div class="di">
+              <div class="di-s ds-che">Chem</div>
+              <div style="flex:1;">
+                <div class="di-q">SN1 aur SN2 reactions mein kya difference hai?</div>
+                <div class="di-m">Kal · Organic Chemistry</div>
+              </div>
+              <div class="di-arr">›</div>
+            </div>
+            <div class="di">
+              <div class="di-s ds-mat">Maths</div>
+              <div style="flex:1;">
+                <div class="di-q">Integration by parts kab use karte hain?</div>
+                <div class="di-m">2 din pehle · Calculus · ✨ Whiteboard generated</div>
+              </div>
+              <div class="di-arr">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="streak">
+          <div class="streak-n">12</div>
+          <div class="streak-i">
+            <div class="t">🔥 Din Ka Streak!</div>
+            <div class="s">Kal bhi padho — 13 ka badge milega</div>
+          </div>
+          <div class="streak-em">🏆</div>
+        </div>
+
+        <div class="card">
+          <div class="ch">
+            <div class="ct">Aaj Ka Plan</div>
+            <div class="ca">Edit</div>
+          </div>
+          <div class="cb" style="padding:12px 14px;">
+            <div class="plan-today">
+              <div class="pt-badge">Aaj</div>
+              <div class="pt-date">Monday, 14 July</div>
+            </div>
+            <div class="pi done">
+              <div class="pi-ck ck-done">✓</div>
+              <div style="flex:1;min-width:0;">
+                <div class="pi-sub">Physics</div>
+                <div class="pi-top">Thermodynamics Laws</div>
+              </div>
+              <div class="pi-dur">45m</div>
+              <div class="pi-typ typ-l">Learn</div>
+            </div>
+            <div class="pi">
+              <div class="pi-ck ck-todo"></div>
+              <div style="flex:1;min-width:0;">
+                <div class="pi-sub">Chemistry</div>
+                <div class="pi-top">Organic Reactions</div>
+              </div>
+              <div class="pi-dur">40m</div>
+              <div class="pi-typ typ-r">Revise</div>
+            </div>
+            <div class="pi">
+              <div class="pi-ck ck-todo"></div>
+              <div style="flex:1;min-width:0;">
+                <div class="pi-sub">Maths</div>
+                <div class="pi-top">20 MCQs — Calculus</div>
+              </div>
+              <div class="pi-dur">30m</div>
+              <div class="pi-typ typ-p">Practice</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ch">
+            <div class="ct">Concept Weakness Map</div>
+            <div class="ca">Full Map →</div>
+          </div>
+          <div class="cb">
+            <div class="wl">
+              <div>
+                <div class="wi-top"><div class="wi-c">Impulse & Momentum</div><div class="wi-sc wi-w">Weak 78%</div></div>
+                <div class="wbar"><div class="wfill wf-w" style="width:78%"></div></div>
+              </div>
+              <div>
+                <div class="wi-top"><div class="wi-c">Organic Reactions</div><div class="wi-sc wi-m">Medium 54%</div></div>
+                <div class="wbar"><div class="wfill wf-m" style="width:54%"></div></div>
+              </div>
+              <div>
+                <div class="wi-top"><div class="wi-c">Integration (Calculus)</div><div class="wi-sc wi-m">Medium 41%</div></div>
+                <div class="wbar"><div class="wfill wf-m" style="width:41%"></div></div>
+              </div>
+              <div>
+                <div class="wi-top"><div class="wi-c">Kinematics</div><div class="wi-sc wi-s">Strong 18%</div></div>
+                <div class="wbar"><div class="wfill wf-s" style="width:18%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /s2 -->
+
+<!-- ══════════════ SCREEN 3: DOUBT SOLVER ══════════════ -->
+<div id="s3" class="screen">
+<div class="app">
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-lm">🎓</div>
+      <div class="sb-lt">Vidya<span>AI</span></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Main</div>
+      <div class="sb-item"><div class="sb-ic">🏠</div>Dashboard</div>
+      <div class="sb-item on"><div class="sb-ic">🎤</div>Doubt Solver</div>
+      <div class="sb-item"><div class="sb-ic">📅</div>Study Plan</div>
+      <div class="sb-item"><div class="sb-ic">📊</div>Progress</div>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-av">R</div>
+        <div>
+          <div class="sb-un">Rahul Singh</div>
+          <div class="sb-uc">Class 12 · JEE · Plus ✨</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+    <div class="vd-top">
+      <div class="vd-back">←</div>
+      <div>
+        <div class="vd-title">Voice Doubt Solver</div>
+        <div class="vd-sub">Bolke poochho — 5 second mein jawab milega</div>
+      </div>
+      <div class="lang-btn">🇮🇳 Hindi ▾</div>
+    </div>
+    <div style="flex:1;display:flex;min-width:0;">
+      <div class="vd-body">
+        <div class="rec-card">
+          <div class="rec-chips">
+            <div class="rchip rchip-on">Physics</div>
+            <div class="rchip rchip-che">Chemistry</div>
+            <div class="rchip rchip-mat">Maths</div>
+            <div class="rchip rchip-bio">Biology</div>
+          </div>
+          <div class="big-mic">🎤</div>
+          <div class="rec-title">Mic tap karo aur bolo</div>
+          <div class="rec-sub">Apna doubt clearly bolo<br>Average response: 5 seconds ⚡</div>
+          <div class="or-r">
+            <div class="or-l"></div>
+            <div class="or-t">ya type karo</div>
+            <div class="or-l"></div>
+          </div>
+          <input class="type-inp" placeholder="Apna physics doubt yahan type karo...">
+          <div class="rec-btns">
+            <button class="rb-main">🎤 Bolke Poochho</button>
+            <button class="rb-sec">📷 Photo Upload</button>
+          </div>
+        </div>
+
+        <div class="vd-right">
+          <div class="tip-box">
+            <div class="tip-ic">💡</div>
+            <div class="tip-t">Best Doubts Kaise Poochhen?</div>
+            <div class="tip-s">
+              Subject + chapter mention karo:<br>
+              <em style="color:rgba(255,255,255,0.7);">"Physics mein Laws of Motion — momentum aur impulse ka fark kya hai?"</em><br><br>
+              Physics, Chemistry aur Maths ke liye animated whiteboard bhi milega! ✨
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:0;">
+            <div class="ch">
+              <div class="ct">Aaj Ke Doubts</div>
+              <div style="font-size:11px;font-weight:700;background:#FEF3C7;color:#D97706;padding:3px 9px;border-radius:8px;">2/3 free used</div>
+            </div>
+            <div class="cb" style="padding:10px 14px;">
+              <div class="di">
+                <div class="di-s ds-phy">PHY</div>
+                <div style="flex:1;">
+                  <div class="di-q">Newton ka third law?</div>
+                  <div class="di-m">10:23 AM · ✨ Whiteboard</div>
+                </div>
+                <div style="font-size:11px;color:#1B8A4E;font-weight:600;">✓</div>
+              </div>
+              <div class="di" style="border-bottom:none;">
+                <div class="di-s ds-che">CHE</div>
+                <div style="flex:1;">
+                  <div class="di-q">Covalent bond kaise banta hai?</div>
+                  <div class="di-m">9:45 AM</div>
+                </div>
+                <div style="font-size:11px;color:#1B8A4E;font-weight:600;">✓</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="up-box">
+            <div class="up-t">🚀 Plus mein Upgrade Karo</div>
+            <div class="up-s">Unlimited doubts + animated whiteboard + parent dashboard sirf <strong>₹199/month</strong></div>
+            <button class="btn-up">Upgrade Karo →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /s3 -->
+
+<!-- ══════════════ SCREEN 4: WHITEBOARD ══════════════ -->
+<div id="s4" class="screen">
+<div class="app">
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-lm">🎓</div>
+      <div class="sb-lt">Vidya<span>AI</span></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Main</div>
+      <div class="sb-item"><div class="sb-ic">🏠</div>Dashboard</div>
+      <div class="sb-item on"><div class="sb-ic">🎤</div>Doubt Solver</div>
+      <div class="sb-item"><div class="sb-ic">📅</div>Study Plan</div>
+      <div class="sb-item"><div class="sb-ic">📊</div>Progress</div>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-av">R</div>
+        <div>
+          <div class="sb-un">Rahul Singh</div>
+          <div class="sb-uc">Class 12 · JEE · Plus ✨</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+    <div class="wb-top2">
+      <div class="wb-back2">←</div>
+      <div class="wb-info">
+        <div class="wb-subj">📚 Physics — Laws of Motion · Class 11 · JEE</div>
+        <div class="wb-q">"Momentum aur Impulse mein kya fark hai? Dono same lagte hain."</div>
+      </div>
+      <div class="wb-live">
+        <div class="live-d"></div>
+        Live Whiteboard ✨
+      </div>
+    </div>
+
+    <div class="wb-body">
+      <!-- CANVAS -->
+      <div class="wb-canvas">
+        <div class="wb-grid"></div>
+        <div class="wb-steps2">
+          <div class="wsd done"></div>
+          <div class="wsd now"></div>
+          <div class="wsd"></div>
+        </div>
+        <div class="wb-slbl">Step 2 / 3</div>
+
+        <svg class="wb-svg2" viewBox="0 0 540 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#3949AB"/>
+            </marker>
+            <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="#DC2626"/>
+            </marker>
+          </defs>
+
+          <!-- ── STEP 1 (done, dimmed) ── -->
+          <g opacity="0.28">
+            <circle cx="80" cy="120" r="22" fill="#FF6B00"/>
+            <text x="80" y="126" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">⚽</text>
+            <line x1="104" y1="120" x2="190" y2="120" stroke="#3949AB" stroke-width="3" marker-end="url(#ah1)"/>
+            <text x="144" y="108" font-size="14" fill="#3949AB" font-weight="800">v</text>
+            <text x="80" y="88" text-anchor="middle" font-size="13" fill="#374151" font-weight="600">m = 2 kg</text>
+            <rect x="220" y="100" width="140" height="40" rx="9" fill="#E8EAF6"/>
+            <text x="290" y="125" text-anchor="middle" font-size="17" fill="#1A237E" font-weight="800">p = m × v</text>
+          </g>
+
+          <!-- ── STEP 2 (active) ── -->
+          <!-- Cricket bat -->
+          <rect x="58" y="220" width="14" height="70" rx="6" fill="#7C3AED" class="an-si"/>
+          <ellipse cx="65" cy="215" rx="22" ry="12" fill="#A78BFA" class="an-si"/>
+          <text x="52" y="308" font-size="11" fill="#6B7280" class="an-fu">Bat</text>
+
+          <!-- Force arrow (animated draw) -->
+          <line x1="92" y1="248" x2="195" y2="248" stroke="#DC2626" stroke-width="4" marker-end="url(#ah2)" class="an-dr"/>
+          <text x="140" y="235" text-anchor="middle" font-size="16" fill="#DC2626" font-weight="900" class="an-fu">F (Force)</text>
+
+          <!-- Ball moving -->
+          <g class="an-bl">
+            <circle cx="228" cy="248" r="22" fill="#FF6B00"/>
+            <text x="228" y="254" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">⚽</text>
+          </g>
+
+          <!-- Clock (Δt) -->
+          <circle cx="330" cy="240" r="26" fill="none" stroke="#D97706" stroke-width="3" class="an-po"/>
+          <line x1="330" y1="224" x2="330" y2="240" stroke="#D97706" stroke-width="2.5" class="an-dr"/>
+          <line x1="330" y1="240" x2="344" y2="250" stroke="#D97706" stroke-width="2.5" class="an-dr"/>
+          <text x="330" y="280" text-anchor="middle" font-size="15" fill="#D97706" font-weight="800" class="an-fu">Δt</text>
+
+          <!-- Impulse formula box -->
+          <rect x="386" y="220" width="136" height="44" rx="10" fill="#FEF3C7" class="an-po"/>
+          <text x="454" y="247" text-anchor="middle" font-size="18" fill="#B45309" font-weight="900" class="an-fu">J = F × Δt</text>
+
+          <!-- KEY INSIGHT banner -->
+          <rect x="150" y="320" width="280" height="54" rx="13" fill="#0D1B3E" class="an-fu"/>
+          <text x="290" y="341" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.45)" font-weight="700" letter-spacing="1" class="an-fu">KEY INSIGHT</text>
+          <text x="290" y="362" text-anchor="middle" font-size="15" fill="#FF8C42" font-weight="900" class="an-fu">Impulse = Δ Momentum</text>
+
+          <!-- Units note -->
+          <text x="290" y="393" text-anchor="middle" font-size="11" fill="#9CA3AF" class="an-fu">Both measured in N·s — isliye confuse lagte hain!</text>
+        </svg>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="wb-right2">
+        <div class="wb-tr">
+          <div class="tr-lbl">🎙 AI Explanation — Hindi</div>
+          <div class="tr-body">
+            Rahul, bahut achha sawaal hai — yeh dono related hain lekin alag cheezein hain!<br><br>
+            <span class="hl">Momentum (p)</span> ek object ki "motion ki quantity" hai. Sochlo ek heavy truck 100 km/h pe ja rahi hai vs ek cycle — truck ka momentum zyada hai, isliye rokna mushkil hai. Formula: <span class="hl">p = m × v</span>.<br><br>
+            Ab dekho yahan — <span class="hl">bat</span> ball ko hit kar raha hai. Yeh <span class="hl">force (F)</span> thode time <span class="hl">Δt</span> ke liye ball pe lagti hai. Yahi <span class="hl">Impulse (J)</span> hai — J = F × Δt.<br><br>
+            Aur sabse important point: <span class="hl">Impulse = Momentum mein change</span> hota hai. Isliye dono ka unit same hai — N·s. Lekin impulse ek <em>action</em> (bat ka hit) hai, momentum ek <em>result</em> (ball ki motion) hai! 💡
+          </div>
+        </div>
+
+        <div class="wb-audio">
+          <div class="a-row">
+            <div class="a-play">⏸</div>
+            <div class="a-track2">
+              <div class="a-fill2"></div>
+              <div class="a-dot2"></div>
+            </div>
+            <div class="a-time">0:24 / 0:56</div>
+          </div>
+          <div class="a-bottom">
+            <div class="a-lang">🇮🇳 Hindi · Aditi</div>
+            <div class="fb-row">
+              <div class="fb-b ok">👍 Samajh Aaya</div>
+              <div class="fb-b">👎 Aur Explain</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /s4 -->
+
+</div><!-- /screens -->
+<script>
+function show(id,el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

@@ -9,7 +9,8 @@ import { useStorage } from './useStorage';
 
 const UserSchema = z.object({
   id: z.string(),
-  phone: z.string(),
+  phone: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
   name: z.string(),
   class: z.number(),
   board: z.string(),
@@ -23,6 +24,12 @@ const UserSchema = z.object({
 const ProfileResponseSchema = z.object({ user: UserSchema });
 
 const VerifyOtpResponseSchema = z.object({
+  token: z.string(),
+  isOnboarded: z.boolean(),
+  userId: z.string(),
+});
+
+const EmailAuthResponseSchema = z.object({
   token: z.string(),
   isOnboarded: z.boolean(),
   userId: z.string(),
@@ -135,5 +142,45 @@ export function useAuth() {
     window.location.replace('/auth/phone');
   }, [storage]);
 
-  return { ...state, verifyOtp, onboard, logout };
+  const emailLogin = useCallback(
+    async (email: string, password: string): Promise<{ isOnboarded: boolean }> => {
+      try {
+        const res = await apiClient.post('/api/auth/login', { email, password });
+        const parsed = EmailAuthResponseSchema.parse(res.data);
+        saveToken(parsed.token);
+        if (parsed.isOnboarded) {
+          const user = await fetchProfile();
+          setState({ user, isLoading: false, isAuthenticated: user !== null });
+        }
+        return { isOnboarded: parsed.isOnboarded };
+      } catch (err) {
+        const msg = axios.isAxiosError(err)
+          ? (err.response?.data as { error?: string })?.error ?? 'Login failed'
+          : 'Login failed';
+        toast.error(msg);
+        throw err;
+      }
+    },
+    [fetchProfile, saveToken]
+  );
+
+  const register = useCallback(
+    async (name: string, email: string, password: string): Promise<{ isOnboarded: boolean }> => {
+      try {
+        const res = await apiClient.post('/api/auth/register', { name, email, password });
+        const parsed = EmailAuthResponseSchema.parse(res.data);
+        saveToken(parsed.token);
+        return { isOnboarded: parsed.isOnboarded };
+      } catch (err) {
+        const msg = axios.isAxiosError(err)
+          ? (err.response?.data as { error?: string })?.error ?? 'Registration failed'
+          : 'Registration failed';
+        toast.error(msg);
+        throw err;
+      }
+    },
+    [saveToken]
+  );
+
+  return { ...state, verifyOtp, onboard, logout, emailLogin, register };
 }

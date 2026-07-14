@@ -81,7 +81,7 @@ describe('apiClient interceptors', () => {
 
     await expect(apiClient.get('/api/test')).rejects.toThrow();
     expect(localStorage.getItem(JWT_KEY)).toBeNull();
-    expect(replaceMock).toHaveBeenCalledWith('/auth/phone');
+    expect(replaceMock).toHaveBeenCalledWith('/auth/login');
   });
 
   // ── TC-AXIOS-04 ────────────────────────────────────────────────────────────

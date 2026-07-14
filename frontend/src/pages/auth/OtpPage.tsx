@@ -62,8 +62,10 @@ export function OtpPage() {
       const idToken = await firebaseUser.user.getIdToken();
       const { isOnboarded } = await verifyOtp(idToken);
       navigate(isOnboarded ? '/home' : '/auth/onboard', { replace: true });
-    } catch {
-      toast.error('Invalid OTP — please try again');
+    } catch (err) {
+      const code = (err as { code?: string })?.code ?? 'unknown';
+      console.error('[OTP] Firebase error:', err);
+      toast.error(`OTP failed: ${code}`);
       setDigits(Array(OTP_LENGTH).fill(''));
       inputRefs.current[0]?.focus();
     } finally {

@@ -10,9 +10,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-navy">
         <div className="text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-orange border-t-transparent" />
           <p className="mt-3 text-sm text-gray-500">Loading...</p>
         </div>
       </div>
@@ -20,7 +20,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth/phone" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   // Onboarding not complete — user.class is 0 sentinel

@@ -4,7 +4,7 @@
  * Happy path: authenticated + onboarded → renders children
  * Failure cases:
  *   1. Loading state → spinner shown, no redirect
- *   2. Not authenticated → redirects to /auth/phone
+ *   2. Not authenticated → redirects to /auth/login
  *   3. Authenticated but class=0 (not onboarded) → redirects to /auth/onboard
  *   4. Authenticated + onboarded → children rendered, no redirect
  *
@@ -46,7 +46,7 @@ function setup(initialPath = '/home') {
             </AuthGuard>
           }
         />
-        <Route path="/auth/phone" element={<div>Phone page</div>} />
+        <Route path="/auth/login" element={<div>Login page</div>} />
         <Route path="/auth/onboard" element={<div>Onboard page</div>} />
       </Routes>
     </MemoryRouter>
@@ -72,7 +72,7 @@ describe('AuthGuard', () => {
   });
 
   // ── TC-GUARD-02 ────────────────────────────────────────────────────────────
-  it('TC-GUARD-02: not authenticated → redirects to /auth/phone', () => {
+  it('TC-GUARD-02: not authenticated → redirects to /auth/login', () => {
     vi.mocked(useAuth).mockReturnValue({
       isLoading: false,
       isAuthenticated: false,
@@ -83,7 +83,7 @@ describe('AuthGuard', () => {
     });
 
     setup();
-    expect(screen.getByText('Phone page')).toBeInTheDocument();
+    expect(screen.getByText('Login page')).toBeInTheDocument();
     expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
   });
 
@@ -116,7 +116,7 @@ describe('AuthGuard', () => {
 
     setup();
     expect(screen.getByText('Protected content')).toBeInTheDocument();
-    expect(screen.queryByText('Phone page')).not.toBeInTheDocument();
+    expect(screen.queryByText('Login page')).not.toBeInTheDocument();
     expect(screen.queryByText('Onboard page')).not.toBeInTheDocument();
   });
 });

@@ -13,7 +13,7 @@
  * Real: localStorage (jsdom), Zod parsing, React state
  */
 import { renderHook, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import toast from 'react-hot-toast';
 import { server } from '../msw/server';
@@ -25,15 +25,32 @@ import React from 'react';
 const BASE = 'http://localhost:3000';
 const JWT_KEY = 'vidyaai_jwt';
 
+// jsdom does not allow spying on window.location.replace directly — delete + redefine
+const locationDescriptor = Object.getOwnPropertyDescriptor(window, 'location');
+
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
 }
 
 describe('useAuth', () => {
+  let replaceMock: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
+    replaceMock = vi.fn();
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      writable: true,
+      value: { ...window.location, replace: replaceMock },
+    });
+  });
+
+  afterEach(() => {
+    if (locationDescriptor) {
+      Object.defineProperty(window, 'location', locationDescriptor);
+    }
   });
 
   // ── TC-AUTH-01 ──────────────────────────────────────────────────────────────
@@ -181,17 +198,15 @@ describe('useAuth', () => {
   // ── TC-AUTH-10 ──────────────────────────────────────────────────────────────
   it('TC-AUTH-10: logout → clears JWT, resets state', async () => {
     localStorage.setItem(JWT_KEY, 'valid-token');
-    const replaceSpy = vi.spyOn(window.location, 'replace').mockImplementation(() => {});
 
     const { result } = renderHook(() => useAuth(), { wrapper });
     await waitFor(() => expect(result.current.isAuthenticated).toBe(true));
 
     result.current.logout();
 
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(false));
     expect(localStorage.getItem(JWT_KEY)).toBeNull();
-    expect(result.current.isAuthenticated).toBe(false);
-    expect(replaceSpy).toHaveBeenCalledWith('/auth/phone');
-    replaceSpy.mockRestore();
+    expect(replaceMock).toHaveBeenCalledWith('/auth/phone');
   });
 
   // ── TC-AUTH-11 ──────────────────────────────────────────────────────────────

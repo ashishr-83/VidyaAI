@@ -5,7 +5,7 @@ import { AppError } from './errorHandler';
 
 export interface JwtPayload {
   userId: string;
-  phone: string;
+  phone?: string;  // optional — email-auth users won't have it
   tier: string;
 }
 

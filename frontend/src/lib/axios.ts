@@ -23,7 +23,7 @@ apiClient.interceptors.response.use(
   (error: unknown) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       localStorage.removeItem(JWT_KEY);
-      window.location.replace('/auth/phone');
+      window.location.replace('/auth/login');
     }
     return Promise.reject(error);
   }

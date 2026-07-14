@@ -45,4 +45,22 @@ export const handlers = [
   http.post(`${BASE}/api/auth/onboard`, () =>
     HttpResponse.json({ user: MOCK_USER_ONBOARDED })
   ),
+
+  // POST /api/auth/register — success
+  http.post(`${BASE}/api/auth/register`, () =>
+    HttpResponse.json({
+      token: 'mock-jwt-token',
+      isOnboarded: false,
+      userId: 'user-789',
+    }, { status: 201 })
+  ),
+
+  // POST /api/auth/login — success
+  http.post(`${BASE}/api/auth/login`, () =>
+    HttpResponse.json({
+      token: 'mock-jwt-token',
+      isOnboarded: true,
+      userId: 'user-123',
+    })
+  ),
 ];

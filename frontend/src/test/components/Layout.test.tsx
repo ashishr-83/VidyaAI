@@ -60,9 +60,10 @@ function setup(path = '/home') {
 
 describe('Layout', () => {
   // ── TC-LAYOUT-01 ───────────────────────────────────────────────────────────
-  it('TC-LAYOUT-01: VidyaAI brand text visible in top nav', () => {
+  it('TC-LAYOUT-01: VidyaAI brand text visible in sidebar', () => {
     setup();
-    expect(screen.getByText('VidyaAI')).toBeInTheDocument();
+    // Brand is split across spans: "Vidya" + "AI" — query by partial text
+    expect(screen.getByText(/vidya/i)).toBeInTheDocument();
   });
 
   // ── TC-LAYOUT-02 ───────────────────────────────────────────────────────────
@@ -83,12 +84,10 @@ describe('Layout', () => {
   });
 
   // ── TC-LAYOUT-04 ───────────────────────────────────────────────────────────
-  it('TC-LAYOUT-04: logout button calls logout from useAuth', async () => {
-    const { logout } = setup();
-    // There may be 2 logout buttons (Layout + ProfilePage if rendered) — click the first
-    const logoutButtons = screen.getAllByRole('button', { name: /logout/i });
-    await userEvent.click(logoutButtons[0]);
-    expect(logout).toHaveBeenCalledOnce();
+  it('TC-LAYOUT-04: sidebar footer avatar is visible with user initial', () => {
+    setup();
+    // Logout moved to ProfilePage — sidebar shows user avatar initial in footer
+    expect(screen.getByText('A')).toBeInTheDocument(); // 'A' = first letter of 'Arjun Sharma'
   });
 
   // ── TC-LAYOUT-05 ───────────────────────────────────────────────────────────
@@ -98,9 +97,9 @@ describe('Layout', () => {
   });
 
   // ── TC-LAYOUT-06 ───────────────────────────────────────────────────────────
-  it('TC-LAYOUT-06: LanguagePicker is rendered in the top bar', () => {
-    setup();
-    expect(screen.getByRole('combobox', { name: /select language/i })).toBeInTheDocument();
+  it('TC-LAYOUT-06: Outlet renders page content (LanguagePicker moved to ProfilePage)', () => {
+    setup('/home');
+    expect(screen.getByText('Home content')).toBeInTheDocument();
   });
 
   // ── TC-LAYOUT-07 ───────────────────────────────────────────────────────────
