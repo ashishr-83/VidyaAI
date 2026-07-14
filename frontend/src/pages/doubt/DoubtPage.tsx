@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
 import { MicButton } from '@/components/MicButton';
+import { AudioPlayer } from '@/components/AudioPlayer';
 import { SubjectBadge } from '@/components/SubjectBadge';
 import { useLanguage } from '@/hooks/useLanguage';
+import { apiClient } from '@/lib/axios';
 
 type Subject = 'Physics' | 'Chemistry' | 'Maths' | 'Biology';
 const SUBJECTS: Subject[] = ['Physics', 'Chemistry', 'Maths', 'Biology'];
@@ -16,6 +21,15 @@ const LANGUAGE_LABELS: Record<string, string> = {
   hi: 'Hindi', en: 'English', ta: 'Tamil', te: 'Telugu', kn: 'Kannada', mr: 'Marathi',
 };
 
+const SolveResponseSchema = z.object({
+  doubtId: z.string(),
+  answer: z.string(),
+  conceptsTagged: z.array(z.string()),
+  audioUrl: z.string().nullable(),
+});
+
+type SolveResponse = z.infer<typeof SolveResponseSchema>;
+
 export function DoubtPage() {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -23,6 +37,45 @@ export function DoubtPage() {
   const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [textInput, setTextInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState<SolveResponse | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function submitDoubt() {
+    const question = textInput.trim();
+    if (question.length < 5) {
+      toast.error('Please type at least 5 characters before submitting.');
+      return;
+    }
+
+    setIsLoading(true);
+    setResult(null);
+
+    try {
+      const res = await apiClient.post('/api/doubt/solve', {
+        text: question,
+        subject: activeSubject ?? 'General',
+        language,
+      });
+      const parsed = SolveResponseSchema.parse(res.data);
+      setResult(parsed);
+      setTextInput('');
+    } catch (err) {
+      const msg = axios.isAxiosError(err)
+        ? (err.response?.data as { error?: string })?.error ?? 'Something went wrong. Please try again.'
+        : 'Something went wrong. Please try again.';
+      toast.error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      void submitDoubt();
+    }
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -80,22 +133,54 @@ export function DoubtPage() {
             </div>
 
             <input
+              ref={inputRef}
               type="text"
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder={`Type your${activeSubject ? ` ${activeSubject}` : ''} doubt here…`}
-              className="w-full px-4 py-3.5 rounded-[12px] border-[1.5px] border-gray-200 bg-gray-50 text-[14px] text-gray-700 outline-none focus:border-orange focus:bg-white transition-all font-inter"
+              disabled={isLoading}
+              className="w-full px-4 py-3.5 rounded-[12px] border-[1.5px] border-gray-200 bg-gray-50 text-[14px] text-gray-700 outline-none focus:border-orange focus:bg-white transition-all font-inter disabled:opacity-50"
             />
 
             <div className="flex gap-2.5 mt-3.5 w-full">
-              <button className="flex-1 py-3 rounded-[11px] text-[13px] font-bold text-white hover:opacity-90 transition-opacity"
-                style={{ background: 'linear-gradient(135deg,#FF6B00,#FF9800)', boxShadow: '0 4px 14px rgba(255,107,0,0.3)' }}>
-                🎤 Submit Voice
+              <button
+                onClick={() => void submitDoubt()}
+                disabled={isLoading || textInput.trim().length < 5}
+                className="flex-1 py-3 rounded-[11px] text-[13px] font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ background: 'linear-gradient(135deg,#FF6B00,#FF9800)', boxShadow: '0 4px 14px rgba(255,107,0,0.3)' }}
+              >
+                {isLoading ? '⏳ Thinking…' : '✉️ Submit'}
               </button>
               <button className="flex-1 py-3 rounded-[11px] border-[1.5px] border-gray-200 bg-white text-[13px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
                 📷 Upload Photo
               </button>
             </div>
+
+            {/* Answer card */}
+            {result && (
+              <div className="mt-5 w-full rounded-[14px] border border-gray-200 bg-white overflow-hidden text-left">
+                <div className="px-5 py-4">
+                  <div className="text-[12px] font-bold text-orange mb-2 uppercase tracking-wide">VidyaAI Answer</div>
+                  <p className="text-[14px] text-gray-700 leading-[1.7] whitespace-pre-wrap">{result.answer}</p>
+                  {result.conceptsTagged.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-3">
+                      {result.conceptsTagged.map((c) => (
+                        <span key={c} className="text-[10px] px-2 py-1 rounded-full bg-orange/10 text-orange font-semibold">{c}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {result.audioUrl && (
+                  <AudioPlayer
+                    src={result.audioUrl}
+                    language={LANGUAGE_LABELS[language] ?? 'Hindi'}
+                    onHelpful={() => toast.success('Glad it helped!')}
+                    onNotHelpful={() => toast('Ask a follow-up question below')}
+                  />
+                )}
+              </div>
+            )}
           </div>
 
           {/* Right panel */}

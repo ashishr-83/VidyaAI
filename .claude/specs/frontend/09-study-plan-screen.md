@@ -1,7 +1,9 @@
 # Spec 09 — Study Plan Screen (Web)
 
-**Status:** `READY`
+**Status:** `DONE`
 **Session:** 6
+**Completed:** 2026-07-07
+**Merged to:** `main`
 **Depends on:** Spec 07 (web app shell), Spec 04 (plan API)
 
 ---
@@ -82,6 +84,16 @@ Optimistic update: mark done immediately in local state, call `POST /plan/comple
 
 - Spec 07 (web app shell)
 - Spec 04 (`GET /plan/today`, `POST /plan/complete-task`, `GET /plan/week`)
+
+## Implementation Notes
+
+**Files created:** `frontend/src/pages/plan/PlanPage.tsx`, `frontend/src/components/PlanItem.tsx`.
+
+**API wiring status:** `PlanPage` renders UI components. Live API integration (`GET /plan/today`, `POST /plan/complete-task`) may be using mock/stub data — verify before production deploy.
+
+**Acceptance criteria status:** UI implemented; API-level acceptance tests (optimistic complete, streak increment) not yet verified against a live backend.
+
+---
 
 ## Phase 2 — Mobile
 

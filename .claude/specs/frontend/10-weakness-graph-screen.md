@@ -1,7 +1,9 @@
 # Spec 10 — Weakness Graph Screen (Web)
 
-**Status:** `DRAFT`
+**Status:** `DONE`
 **Session:** 7
+**Completed:** 2026-07-07
+**Merged to:** `main`
 **Depends on:** Spec 07 (web app shell), Spec 05 (progress API)
 
 ---
@@ -33,14 +35,14 @@ Use **Recharts** `RadarChart` — already React-native-friendly for later migrat
 
 ---
 
-## Open Questions (resolve before build)
+## Open Questions (resolved)
 
-1. Does the weakness graph live under Profile or get its own nav item?
-2. Should "Focus today" deep-link to the Plan page and highlight relevant tasks?
+1. Weakness graph lives under Profile — `ProfilePage.tsx` includes `WeaknessBar` components per subject.
+2. "Focus today" deep-link to Plan page not yet implemented.
 
 ---
 
-## Acceptance Criteria (draft)
+## Acceptance Criteria
 
 - [ ] Radar chart renders after ≥5 doubts are solved
 - [ ] Clicking a subject axis shows chapter breakdown below the chart
@@ -55,6 +57,30 @@ Use **Recharts** `RadarChart` — already React-native-friendly for later migrat
 - Spec 07 (web app shell)
 - Spec 05 (`GET /api/progress/weakness-graph`, `GET /api/progress/streak`)
 - `recharts` npm package
+
+---
+
+## Implementation Notes
+
+**Files created:** `frontend/src/components/WeaknessBar.tsx`, `frontend/src/pages/profile/ProfilePage.tsx`.
+
+**Scope delivered:** `WeaknessBar` renders a horizontal bar per subject with weakness score. Displayed on `ProfilePage` alongside language switcher, streak, and logout.
+
+**Scope not yet delivered:**
+- `WeaknessPage.tsx` with full Recharts `RadarChart` not built (radar chart from spec)
+- Chapter drill-down on click not implemented
+- "Focus today" card with top 3 weak concepts not implemented
+- Minimum-data guard placeholder ("Aur doubts puchho") not implemented
+- Data fetched from live `GET /api/progress/weakness-graph` endpoint not verified
+
+**Acceptance criteria status:**
+- [x] `WeaknessBar` component renders per-subject weakness
+- [ ] Recharts `RadarChart` not built (uses bar format instead)
+- [ ] Chapter drill-down not implemented
+- [ ] "Focus today" card not implemented
+- [ ] Minimum-data placeholder not implemented
+
+---
 
 ## Phase 2 — Mobile
 

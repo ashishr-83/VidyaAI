@@ -162,8 +162,14 @@ router.post(
         weakConcepts,
       });
 
-      // Generate TTS audio response
-      const responseAudioUrl = await synthesiseSpeech({ text: answer, languageCode: body.language });
+      // Generate TTS audio response — non-fatal: if Polly/S3 fails (e.g. no AWS creds in dev),
+      // return the text answer without audio rather than a 500.
+      let responseAudioUrl: string | null = null;
+      try {
+        responseAudioUrl = await synthesiseSpeech({ text: answer, languageCode: body.language });
+      } catch (ttsErr) {
+        logger.warn('TTS synthesis failed — returning text-only response', { err: ttsErr });
+      }
 
       // Store doubt in DB
       const doubt = await prisma.doubt.create({
@@ -174,7 +180,7 @@ router.post(
           subject: body.subject,
           chapter: body.chapter,
           aiResponse: answer,
-          audioResponse: responseAudioUrl,
+          audioResponse: responseAudioUrl ?? undefined,
           conceptsTagged: [],
         },
       });
@@ -235,7 +241,7 @@ router.post(
         doubtId: doubt.id,
         answer,
         conceptsTagged: [],
-        audioUrl: responseAudioUrl,
+        audioUrl: responseAudioUrl ?? null,
       });
     } catch (err) {
       next(err);
