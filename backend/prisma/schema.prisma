@@ -78,3 +78,13 @@ model StudySession {
   topicsCovered   String[]
   date            DateTime @default(now())
 }
+
+model OtpRecord {
+  id        String   @id @default(uuid())
+  phone     String
+  otp       String   // bcrypt hash of the 6-digit OTP
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}

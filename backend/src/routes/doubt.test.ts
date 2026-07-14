@@ -3,14 +3,10 @@ import jwt from 'jsonwebtoken';
 
 // ── Mock declarations must come before any imports that trigger side effects ──
 
-jest.mock('firebase-admin', () => ({
-  apps: [],
-  initializeApp: jest.fn().mockReturnValue({}),
-  credential: { cert: jest.fn() },
-  auth: jest.fn().mockReturnValue({
-    verifyIdToken: jest.fn(),
-  }),
-}));
+jest.mock('twilio', () => {
+  const mockCreate = jest.fn().mockResolvedValue({ sid: 'SM-test' });
+  return jest.fn().mockReturnValue({ messages: { create: mockCreate } });
+});
 
 jest.mock('../lib/prisma', () => ({
   prisma: {
@@ -39,13 +35,14 @@ jest.mock('../lib/env', () => ({
     PORT: 3000,
     DATABASE_URL: 'postgresql://test',
     JWT_SECRET: 'test-secret-that-is-long-enough-32ch',
-    FIREBASE_PROJECT_ID: 'test-project',
-    FIREBASE_SERVICE_ACCOUNT_KEY: '{}',
     ANTHROPIC_API_KEY: 'dummy-test-key',
     AWS_REGION: 'ap-south-1',
     AWS_S3_BUCKET: 'test-bucket',
     AWS_TRANSCRIBE_LANGUAGE_CODE: 'hi-IN',
     REDIS_URL: 'redis://localhost:6379',
+    TWILIO_ACCOUNT_SID: 'ACtest',
+    TWILIO_AUTH_TOKEN: 'test-auth-token',
+    TWILIO_SMS_FROM: '+15005550006',
   },
 }));
 

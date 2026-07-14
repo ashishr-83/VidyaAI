@@ -24,12 +24,6 @@ vi.mock('react-hot-toast', () => ({
   },
 }));
 
-// Silence Firebase in tests — never hit real Firebase
-vi.mock('@/lib/firebase', () => ({
-  auth: {},
-  default: {},
-}));
-
 // Suppress console.error for expected React warnings in tests
 const originalError = console.error.bind(console);
 console.error = (...args: unknown[]) => {

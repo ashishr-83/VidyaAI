@@ -1,5 +1,4 @@
 import './lib/env'; // validates env vars at startup — must be first
-import './lib/firebase'; // initialise Firebase Admin early
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';

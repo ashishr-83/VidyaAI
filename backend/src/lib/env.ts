@@ -18,13 +18,11 @@ const envSchema = z.object({
   AWS_ENDPOINT_URL: z.string().url().optional(),
   MINIO_ROOT_USER: z.string().optional(),
   MINIO_ROOT_PASSWORD: z.string().optional(),
-  FIREBASE_PROJECT_ID: z.string().min(1),
-  FIREBASE_SERVICE_ACCOUNT_KEY: z.string().min(1),
+  // Twilio — optional at startup; routes validate presence at call time
   TWILIO_ACCOUNT_SID: z.string().optional(),
   TWILIO_AUTH_TOKEN: z.string().optional(),
+  TWILIO_SMS_FROM: z.string().optional(),
   TWILIO_WHATSAPP_FROM: z.string().optional(),
-  RAZORPAY_KEY_ID: z.string().optional(),
-  RAZORPAY_KEY_SECRET: z.string().optional(),
   REDIS_URL: z.string().default('redis://localhost:6379'),
 });
 

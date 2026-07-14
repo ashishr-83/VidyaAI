@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import admin from 'firebase-admin';
+import twilio from 'twilio';
 import { prisma } from '../lib/prisma';
 import { env } from '../lib/env';
 import { logger } from '../lib/logger';
@@ -12,10 +12,32 @@ import { authLimiter } from '../middleware/rateLimit';
 
 const router = Router();
 
+// Lazily initialised so the server starts even without Twilio credentials
+let _twilioClient: ReturnType<typeof twilio> | null = null;
+
+function getTwilioClient(): ReturnType<typeof twilio> {
+  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN) {
+    throw new AppError(
+      'Twilio is not configured — set TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN',
+      'SMS_NOT_CONFIGURED',
+      503
+    );
+  }
+  if (!_twilioClient) {
+    _twilioClient = twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
+  }
+  return _twilioClient;
+}
+
 // ── Schemas ────────────────────────────────────────────────────────────────
 
+const sendOtpSchema = z.object({
+  phone: z.string().regex(/^\d{10}$/, 'Phone must be a 10-digit Indian mobile number'),
+});
+
 const verifyOtpSchema = z.object({
-  idToken: z.string().min(1, 'Firebase ID token is required'),
+  phone: z.string().regex(/^\d{10}$/),
+  otp:   z.string().length(6).regex(/^\d{6}$/, 'OTP must be 6 digits'),
 });
 
 const registerSchema = z.object({
@@ -44,52 +66,100 @@ function signJwt(payload: JwtPayload): string {
   return jwt.sign(payload, env.JWT_SECRET, { expiresIn: '30d' });
 }
 
+function generateOtp(): string {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
 // ── Routes ─────────────────────────────────────────────────────────────────
 
 /**
+ * POST /api/auth/send-otp
+ * Generates a 6-digit OTP, persists a bcrypt hash with 10-min expiry, sends via Twilio SMS.
+ */
+router.post(
+  '/send-otp',
+  authLimiter,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { phone } = sendOtpSchema.parse(req.body);
+      const fullPhone = `+91${phone}`;
+
+      const otp = generateOtp();
+      const otpHash = await bcrypt.hash(otp, 10);
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+      // Delete any existing OTP records for this phone to prevent replay
+      await prisma.otpRecord.deleteMany({ where: { phone } });
+
+      await prisma.otpRecord.create({
+        data: { phone, otp: otpHash, expiresAt },
+      });
+
+      if (!env.TWILIO_SMS_FROM) {
+        throw new AppError('SMS sender number not configured — set TWILIO_SMS_FROM', 'SMS_NOT_CONFIGURED', 503);
+      }
+
+      await getTwilioClient().messages.create({
+        to:   fullPhone,
+        from: env.TWILIO_SMS_FROM,
+        body: `Your VidyaAI OTP is ${otp}. Valid for 10 minutes. Do not share this code.`,
+      });
+
+      logger.info('OTP sent', { phone });
+      res.json({ message: 'OTP sent successfully' });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
  * POST /api/auth/verify-otp
- * Verifies a Firebase phone OTP ID token, upserts the user, returns JWT.
+ * Validates { phone, otp } against the DB record, upserts user, returns JWT.
  */
 router.post(
   '/verify-otp',
   authLimiter,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { idToken } = verifyOtpSchema.parse(req.body);
+      const { phone, otp } = verifyOtpSchema.parse(req.body);
 
-      let decodedToken: admin.auth.DecodedIdToken;
-      try {
-        decodedToken = await admin.auth().verifyIdToken(idToken);
-      } catch (err) {
-        logger.warn('Firebase token verification failed', { error: String(err) });
-        throw new AppError('Invalid Firebase ID token', 'INVALID_FIREBASE_TOKEN', 401);
+      const record = await prisma.otpRecord.findFirst({
+        where: { phone, expiresAt: { gt: new Date() } },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      if (!record) {
+        throw new AppError('OTP expired or not found — request a new one', 'OTP_NOT_FOUND', 400);
       }
 
-      const phone = decodedToken.phone_number;
-      if (!phone) {
-        throw new AppError('Phone number not present in Firebase token', 'NO_PHONE_IN_TOKEN', 400);
+      const match = await bcrypt.compare(otp, record.otp);
+      if (!match) {
+        throw new AppError('Incorrect OTP', 'OTP_INVALID', 401);
       }
 
-      // Upsert: if new user, create with placeholder name — onboarding fills the rest
+      // Consume OTP — delete after successful verification
+      await prisma.otpRecord.delete({ where: { id: record.id } });
+
+      // Upsert user — new users get placeholder values filled by /onboard
       const user = await prisma.user.upsert({
         where: { phone },
-        update: { }, // existing users: just touch nothing — profile updates go to /onboard
+        update: {},
         create: {
           phone,
           name: '',
-          class: 0,    // sentinel — onboarding will set real values
+          class: 0,    // sentinel — onboarding sets real value
           board: '',
           language: 'hi',
           tier: 'free',
         },
-        select: { id: true, phone: true, tier: true, name: true, class: true },
+        select: { id: true, phone: true, tier: true, class: true },
       });
 
       const isOnboarded = user.class > 0;
-      const token = signJwt({ userId: user.id, phone: user.phone, tier: user.tier });
+      const token = signJwt({ userId: user.id, phone: user.phone ?? undefined, tier: user.tier });
 
-      logger.info('User authenticated', { userId: user.id, isOnboarded });
-
+      logger.info('User authenticated via OTP', { userId: user.id, isOnboarded });
       res.json({ token, isOnboarded, userId: user.id });
     } catch (err) {
       next(err);
@@ -126,7 +196,6 @@ router.post(
       });
 
       logger.info('User onboarded', { userId });
-
       res.json({ user });
     } catch (err) {
       next(err);
