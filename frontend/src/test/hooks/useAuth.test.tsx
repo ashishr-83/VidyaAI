@@ -115,7 +115,7 @@ describe('useAuth', () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    await result.current.verifyOtp('firebase-id-token');
+    await result.current.verifyOtp('9876543210', '123456');
 
     expect(localStorage.getItem(JWT_KEY)).toBe('mock-jwt-token');
     await waitFor(() => expect(result.current.isAuthenticated).toBe(true));
@@ -136,7 +136,7 @@ describe('useAuth', () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    const { isOnboarded } = await result.current.verifyOtp('firebase-id-token');
+    const { isOnboarded } = await result.current.verifyOtp('9876543210', '654321');
 
     expect(isOnboarded).toBe(false);
     expect(localStorage.getItem(JWT_KEY)).toBe('new-jwt');
@@ -148,15 +148,15 @@ describe('useAuth', () => {
   it('TC-AUTH-07: verifyOtp backend 400 → toast.error called, error re-thrown', async () => {
     server.use(
       http.post(`${BASE}/api/auth/verify-otp`, () =>
-        HttpResponse.json({ error: 'Invalid Firebase ID token', code: 'INVALID_FIREBASE_TOKEN' }, { status: 401 })
+        HttpResponse.json({ error: 'Incorrect OTP', code: 'OTP_INVALID' }, { status: 401 })
       )
     );
 
     const { result } = renderHook(() => useAuth(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    await expect(result.current.verifyOtp('bad-token')).rejects.toThrow();
-    expect(toast.error).toHaveBeenCalledWith('Invalid Firebase ID token');
+    await expect(result.current.verifyOtp('9876543210', '000000')).rejects.toThrow();
+    expect(toast.error).toHaveBeenCalledWith('Incorrect OTP');
   });
 
   // ── TC-AUTH-08 ──────────────────────────────────────────────────────────────

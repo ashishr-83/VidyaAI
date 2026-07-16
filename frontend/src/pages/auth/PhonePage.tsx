@@ -1,19 +1,13 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  type ConfirmationResult,
-} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useAuth } from '@/hooks/useAuth';
 
 export function PhonePage() {
   const navigate = useNavigate();
+  const { sendOtp } = useAuth();
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const recaptchaRef = useRef<HTMLDivElement>(null);
-  const verifierRef = useRef<RecaptchaVerifier | null>(null);
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,28 +18,12 @@ export function PhonePage() {
 
     setIsLoading(true);
     try {
-      if (!verifierRef.current && recaptchaRef.current) {
-        verifierRef.current = new RecaptchaVerifier(auth, recaptchaRef.current, {
-          size: 'invisible',
-        });
-      }
-
-      const fullPhone = `+91${phone}`;
-      const confirmationResult: ConfirmationResult = await signInWithPhoneNumber(
-        auth,
-        fullPhone,
-        verifierRef.current!
-      );
-
-      // Store confirmation for OTP page
-      sessionStorage.setItem('vidyaai_otp_phone', fullPhone);
-      (window as unknown as { __vidyaai_confirmation: ConfirmationResult }).__vidyaai_confirmation = confirmationResult;
-
+      await sendOtp(phone);
+      sessionStorage.setItem('vidyaai_otp_phone', `+91${phone}`);
+      sessionStorage.setItem('vidyaai_otp_phone_raw', phone);
       navigate('/auth/otp');
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to send OTP';
-      toast.error(msg);
-      verifierRef.current = null;
+    } catch {
+      // toast shown by sendOtp
     } finally {
       setIsLoading(false);
     }
@@ -91,9 +69,6 @@ export function PhonePage() {
         <p className="mt-6 text-center text-xs text-gray-400">
           By continuing you agree to our Terms & Privacy Policy
         </p>
-
-        {/* Invisible reCAPTCHA container */}
-        <div ref={recaptchaRef} />
       </div>
     </div>
   );

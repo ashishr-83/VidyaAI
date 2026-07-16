@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import type { ConfirmationResult } from 'firebase/auth';
 import { useAuth } from '@/hooks/useAuth';
 
 const OTP_LENGTH = 6;
 
 export function OtpPage() {
   const navigate = useNavigate();
-  const { verifyOtp } = useAuth();
+  const { sendOtp, verifyOtp } = useAuth();
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [isLoading, setIsLoading] = useState(false);
   const [countdown, setCountdown] = useState(30);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const phone = sessionStorage.getItem('vidyaai_otp_phone') ?? '';
+  const phoneRaw = sessionStorage.getItem('vidyaai_otp_phone_raw') ?? '';
 
   // Countdown timer for resend
   useEffect(() => {
@@ -45,12 +45,7 @@ export function OtpPage() {
       toast.error('Enter all 6 digits');
       return;
     }
-
-    const confirmation = (
-      window as unknown as { __vidyaai_confirmation?: ConfirmationResult }
-    ).__vidyaai_confirmation;
-
-    if (!confirmation) {
+    if (!phoneRaw) {
       toast.error('Session expired — please request OTP again');
       navigate('/auth/phone');
       return;
@@ -58,18 +53,29 @@ export function OtpPage() {
 
     setIsLoading(true);
     try {
-      const firebaseUser = await confirmation.confirm(otp);
-      const idToken = await firebaseUser.user.getIdToken();
-      const { isOnboarded } = await verifyOtp(idToken);
+      const { isOnboarded } = await verifyOtp(phoneRaw, otp);
       navigate(isOnboarded ? '/home' : '/auth/onboard', { replace: true });
-    } catch (err) {
-      const code = (err as { code?: string })?.code ?? 'unknown';
-      console.error('[OTP] Firebase error:', err);
-      toast.error(`OTP failed: ${code}`);
+    } catch {
+      // toast shown by verifyOtp
       setDigits(Array(OTP_LENGTH).fill(''));
       inputRefs.current[0]?.focus();
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!phoneRaw) {
+      navigate('/auth/phone');
+      return;
+    }
+    try {
+      await sendOtp(phoneRaw);
+      setCountdown(30);
+      setDigits(Array(OTP_LENGTH).fill(''));
+      toast.success('OTP resent');
+    } catch {
+      // toast shown by sendOtp
     }
   };
 
@@ -113,7 +119,7 @@ export function OtpPage() {
             <>Resend OTP in {String(countdown).padStart(2, '0')}s</>
           ) : (
             <button
-              onClick={() => { navigate('/auth/phone'); }}
+              onClick={() => { void handleResend(); }}
               className="text-indigo-600 underline"
             >
               Resend OTP

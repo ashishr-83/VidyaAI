@@ -1,19 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { auth } from '@/lib/firebase';
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  type ConfirmationResult,
-} from 'firebase/auth';
 
 type Tab = 'email' | 'phone';
 type PhoneStep = 'enter' | 'otp';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { emailLogin, verifyOtp } = useAuth();
+  const { emailLogin, sendOtp, verifyOtp } = useAuth();
 
   // Tab state
   const [tab, setTab] = useState<Tab>('email');
@@ -30,9 +24,6 @@ export function LoginPage() {
   const [otp, setOtp] = useState('');
   const [phoneLoading, setPhoneLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const confirmationRef = useRef<ConfirmationResult | null>(null);
-  const recaptchaRef = useRef<RecaptchaVerifier | null>(null);
-  const recaptchaContainerId = 'recaptcha-container';
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -55,29 +46,24 @@ export function LoginPage() {
     if (!phone || phone.length < 10) return;
     setPhoneLoading(true);
     try {
-      if (!recaptchaRef.current) {
-        recaptchaRef.current = new RecaptchaVerifier(auth, recaptchaContainerId, { size: 'invisible' });
-      }
-      const fullPhone = phone.startsWith('+') ? phone : `+91${phone}`;
-      const result = await signInWithPhoneNumber(auth, fullPhone, recaptchaRef.current);
-      confirmationRef.current = result;
+      await sendOtp(phone);
       setPhoneStep('otp');
       setCountdown(30);
     } catch {
-      // toast shown by firebase errors
+      // toast shown by sendOtp
     } finally {
       setPhoneLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
-    if (!confirmationRef.current || otp.length !== 6) return;
+    if (otp.length !== 6) return;
     setPhoneLoading(true);
     try {
-      const result = await confirmationRef.current.confirm(otp);
-      const idToken = await result.user.getIdToken();
-      const { isOnboarded } = await verifyOtp(idToken);
+      const { isOnboarded } = await verifyOtp(phone, otp);
       navigate(isOnboarded ? '/home' : '/auth/onboard', { replace: true });
+    } catch {
+      // toast shown by verifyOtp
     } finally {
       setPhoneLoading(false);
     }
@@ -413,9 +399,9 @@ export function LoginPage() {
                       {countdown > 0 ? (
                         `Resend in ${countdown}s`
                       ) : (
-                        <button onClick={() => { setPhoneStep('enter'); setOtp(''); }}
+                        <button onClick={() => { void handleSendOtp(); setOtp(''); setCountdown(30); }}
                           className="text-orange font-semibold hover:underline">
-                          ← Change number
+                          Resend OTP
                         </button>
                       )}
                     </div>
@@ -435,8 +421,6 @@ export function LoginPage() {
         </div>
       </div>
 
-      {/* Invisible reCAPTCHA container */}
-      <div id={recaptchaContainerId} />
     </div>
   );
 }

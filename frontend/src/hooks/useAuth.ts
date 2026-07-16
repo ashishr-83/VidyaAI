@@ -23,6 +23,10 @@ const UserSchema = z.object({
 
 const ProfileResponseSchema = z.object({ user: UserSchema });
 
+const SendOtpResponseSchema = z.object({
+  message: z.string(),
+});
+
 const VerifyOtpResponseSchema = z.object({
   token: z.string(),
   isOnboarded: z.boolean(),
@@ -90,10 +94,26 @@ export function useAuth() {
     [storage]
   );
 
-  const verifyOtp = useCallback(
-    async (idToken: string): Promise<{ isOnboarded: boolean }> => {
+  const sendOtp = useCallback(
+    async (phone: string): Promise<void> => {
       try {
-        const res = await apiClient.post('/api/auth/verify-otp', { idToken });
+        const res = await apiClient.post('/api/auth/send-otp', { phone });
+        SendOtpResponseSchema.parse(res.data);
+      } catch (err) {
+        const msg = axios.isAxiosError(err)
+          ? (err.response?.data as { error?: string })?.error ?? 'Failed to send OTP'
+          : 'Failed to send OTP';
+        toast.error(msg);
+        throw err;
+      }
+    },
+    []
+  );
+
+  const verifyOtp = useCallback(
+    async (phone: string, otp: string): Promise<{ isOnboarded: boolean }> => {
+      try {
+        const res = await apiClient.post('/api/auth/verify-otp', { phone, otp });
         const parsed = VerifyOtpResponseSchema.parse(res.data);
         saveToken(parsed.token);
         if (parsed.isOnboarded) {
@@ -182,5 +202,5 @@ export function useAuth() {
     [saveToken]
   );
 
-  return { ...state, verifyOtp, onboard, logout, emailLogin, register };
+  return { ...state, sendOtp, verifyOtp, onboard, logout, emailLogin, register };
 }

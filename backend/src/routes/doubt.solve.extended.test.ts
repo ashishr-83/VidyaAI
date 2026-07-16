@@ -20,6 +20,11 @@ import jwt from 'jsonwebtoken';
 
 // ── Mock declarations — must precede all side-effectful imports ───────────────
 
+jest.mock('twilio', () => {
+  const mockCreate = jest.fn().mockResolvedValue({ sid: 'SM-test' });
+  return jest.fn().mockReturnValue({ messages: { create: mockCreate } });
+});
+
 jest.mock('firebase-admin', () => ({
   apps: [],
   initializeApp: jest.fn().mockReturnValue({}),
@@ -61,6 +66,9 @@ jest.mock('../lib/env', () => ({
     AWS_S3_BUCKET: 'test-bucket',
     AWS_TRANSCRIBE_LANGUAGE_CODE: 'hi-IN',
     REDIS_URL: 'redis://localhost:6379',
+    TWILIO_ACCOUNT_SID: 'ACtest',
+    TWILIO_AUTH_TOKEN: 'test-auth-token',
+    TWILIO_SMS_FROM: '+15005550006',
   },
 }));
 

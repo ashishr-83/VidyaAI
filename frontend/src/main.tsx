@@ -7,9 +7,6 @@ import { App } from './App';
 import { queryClient } from './lib/queryClient';
 import './index.css';
 
-// Firebase singleton init — imported for side effect
-import './lib/firebase';
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
