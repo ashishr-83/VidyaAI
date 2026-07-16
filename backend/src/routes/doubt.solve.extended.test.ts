@@ -25,6 +25,13 @@ jest.mock('twilio', () => {
   return jest.fn().mockReturnValue({ messages: { create: mockCreate } });
 });
 
+jest.mock('firebase-admin', () => ({
+  apps: [],
+  initializeApp: jest.fn().mockReturnValue({}),
+  credential: { cert: jest.fn() },
+  auth: jest.fn().mockReturnValue({ verifyIdToken: jest.fn() }),
+}));
+
 jest.mock('../lib/prisma', () => ({
   prisma: {
     user: { findUnique: jest.fn() },
@@ -52,6 +59,8 @@ jest.mock('../lib/env', () => ({
     PORT: 3000,
     DATABASE_URL: 'postgresql://test',
     JWT_SECRET: 'test-secret-that-is-long-enough-32ch',
+    FIREBASE_PROJECT_ID: 'test-project',
+    FIREBASE_SERVICE_ACCOUNT_KEY: '{}',
     ANTHROPIC_API_KEY: 'dummy-test-key',
     AWS_REGION: 'ap-south-1',
     AWS_S3_BUCKET: 'test-bucket',
