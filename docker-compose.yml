@@ -92,6 +92,8 @@ services:
     environment:
       # Constructed here so ${POSTGRES_PASSWORD} is interpolated from .env.docker
       DATABASE_URL: postgresql://vidyaai_admin:${POSTGRES_PASSWORD}@postgres:5432/vidyaai
+      # Needed for outbound HTTPS on networks with SSL inspection (dev only)
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
     ports:
       - "3000:3000"
     healthcheck:
