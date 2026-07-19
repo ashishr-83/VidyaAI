@@ -48,3 +48,81 @@ export const WeekPlanSchema = z.object({
 export type TaskItem = z.infer<typeof TaskItemSchema>;
 export type DayPlan = z.infer<typeof DayPlanSchema>;
 export type WeekPlan = z.infer<typeof WeekPlanSchema>;
+
+// ── NCERT Chapter types ───────────────────────────────────────────────────────
+
+export interface ChapterListItem {
+  id: string;
+  chapterNumber: number;
+  chapterName: string;
+  estimatedMinutes: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
+// ── Study Plan Output (v2 — chapter-based) ───────────────────────────────────
+
+export const StudyPlanTaskSchema = z.object({
+  type: z.enum(['concept', 'textbook', 'practice', 'revision']),
+  title: z.string(),
+  durationMinutes: z.number(),
+  conceptExplained: z.string().nullable(),
+  question: z.string().nullable(),
+  hint: z.string().nullable(),
+});
+
+export const StudyPlanDaySchema = z.object({
+  day: z.number(),
+  date: z.string(),
+  chapterName: z.string(),
+  tasks: z.array(StudyPlanTaskSchema),
+  totalMinutes: z.number(),
+  dayGoal: z.string(),
+});
+
+export const StudyPlanOutputSchema = z.object({
+  totalDays: z.number(),
+  subject: z.string(),
+  selectedChapters: z.array(z.string()),
+  days: z.array(StudyPlanDaySchema),
+  weeklyRevisionDays: z.array(z.number()),
+  estimatedCompletionDate: z.string(),
+});
+
+export type StudyPlanTask = z.infer<typeof StudyPlanTaskSchema>;
+export type StudyPlanDay = z.infer<typeof StudyPlanDaySchema>;
+export type StudyPlanOutput = z.infer<typeof StudyPlanOutputSchema>;
+
+// ── Lesson Session types ──────────────────────────────────────────────────────
+
+export const LessonTurnSchema = z.object({
+  message: z.string(),
+  taskComplete: z.boolean(),
+  comprehensionSignal: z.enum(['understood', 'partial', 'confused', 'no_response']),
+  suggestedNextAction: z.enum(['continue', 'repeat_concept', 'give_hint', 'move_on']),
+});
+
+export type LessonTurn = z.infer<typeof LessonTurnSchema>;
+
+export interface LessonMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: number;
+}
+
+export interface LessonStartResponse {
+  sessionId: string;
+  message: string;
+  taskType: string;
+  conceptName: string | null;
+  question: string | null;
+  taskComplete: boolean;
+}
+
+export interface LessonRespondResponse {
+  sessionId: string;
+  message: string;
+  taskComplete: boolean;
+  comprehensionSignal: string;
+  suggestedNextAction: string;
+  nextTaskIndex: number;
+}

@@ -25,6 +25,7 @@ model User {
   studyPlan        StudyPlan?
   weaknesses       WeaknessMap[]
   sessions         StudySession[]
+  lessonSessions   LessonSession[]
 }
 
 model Doubt {
@@ -87,4 +88,36 @@ model OtpRecord {
   createdAt DateTime @default(now())
 
   @@index([phone])
+}
+
+model ChapterContent {
+  id                String   @id @default(uuid())
+  class             Int
+  board             String   @default("CBSE")
+  subject           String
+  chapterNumber     Int
+  chapterName       String
+  concepts          String[]
+  textbookQuestions Json
+  keyFacts          String[]
+  estimatedMinutes  Int
+  difficulty        String
+  pdfS3Key          String?
+  processedAt       DateTime @default(now())
+
+  @@unique([class, board, subject, chapterNumber])
+}
+
+model LessonSession {
+  id                  String    @id @default(uuid())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id])
+  chapterId           String
+  chapterName         String
+  subject             String
+  currentTaskIndex    Int       @default(0)
+  conversationHistory Json
+  status              String    @default("active")
+  startedAt           DateTime  @default(now())
+  completedAt         DateTime?
 }

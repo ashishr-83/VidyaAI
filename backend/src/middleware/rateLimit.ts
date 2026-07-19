@@ -25,3 +25,12 @@ export const doubtLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Slow down — too many requests', code: 'DOUBT_RATE_LIMIT_EXCEEDED' },
 });
+
+// Lesson respond endpoint — students type quickly, allow up to 60 req/min per user.
+export const lessonLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many lesson messages — slow down', code: 'LESSON_RATE_LIMIT_EXCEEDED' },
+});

@@ -23,10 +23,5 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return <Navigate to="/auth/login" replace />;
   }
 
-  // Onboarding not complete — user.class is 0 sentinel
-  if (user && user.class === 0) {
-    return <Navigate to="/auth/onboard" replace />;
-  }
-
   return <>{children}</>;
 }

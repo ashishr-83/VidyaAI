@@ -11,6 +11,7 @@ import { DoubtPage } from '@/pages/doubt/DoubtPage';
 import { PlanPage } from '@/pages/plan/PlanPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
 import { WhiteboardPage } from '@/pages/whiteboard/WhiteboardPage';
+import { LessonPage } from '@/pages/lesson/LessonPage';
 
 export function App() {
   return (
@@ -42,6 +43,16 @@ export function App() {
         element={
           <AuthGuard>
             <WhiteboardPage />
+          </AuthGuard>
+        }
+      />
+
+      {/* Lesson — protected, full-screen chat layout (no sidebar) */}
+      <Route
+        path="/lesson/:sessionId"
+        element={
+          <AuthGuard>
+            <LessonPage />
           </AuthGuard>
         }
       />

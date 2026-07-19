@@ -159,10 +159,29 @@ export function useStudyPlan() {
       .catch((err) => console.warn('complete-task failed:', err));
   }, []);
 
-  const regenerate = useCallback(async () => {
+  const regenerate = useCallback(async (
+    chapterIds?: string[],
+    dailyMinutes?: number,
+    language?: string,
+    subject?: string,
+  ) => {
     setRegenerating(true);
     try {
-      await apiClient.post('/api/plan/regenerate');
+      if (chapterIds && chapterIds.length > 0) {
+        await apiClient.post('/api/plan/regenerate', {
+          subject: subject ?? 'Science',
+          chapterIds,
+          dailyMinutes: dailyMinutes ?? 120,
+          language: language ?? 'hi',
+        });
+      } else {
+        await apiClient.post('/api/plan/regenerate', {
+          subject: subject ?? 'Science',
+          chapterIds: [],
+          dailyMinutes: dailyMinutes ?? 120,
+          language: language ?? 'hi',
+        });
+      }
       await fetchPlan();
     } catch (err) {
       const msg = axios.isAxiosError(err)

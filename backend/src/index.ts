@@ -9,6 +9,8 @@ import { errorHandler } from './middleware/errorHandler';
 import { globalLimiter } from './middleware/rateLimit';
 import authRoutes from './routes/auth';
 import doubtRoutes from './routes/doubt';
+import planRoutes from './routes/plan';
+import lessonRoutes from './routes/lesson';
 
 const app = express();
 
@@ -47,7 +49,8 @@ app.get('/health', async (_req: Request, res: Response) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/doubt', doubtRoutes);
-// app.use('/api/plan', planRoutes);     // Session 6
+app.use('/api/plan', planRoutes);
+app.use('/api/lesson', lessonRoutes);
 // app.use('/api/progress', progressRoutes); // Session 7
 // app.use('/api/payment', paymentRoutes);   // Session 8
 

@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "if echo '%claude_tool_input%' | grep -q 'backend/' 2>/dev/null; then cd C:/my-Project/Vidya_AI/VidyaAI/backend && npx tsc --noEmit 2>&1 | head -20; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo '%claude_tool_input%' | grep -q 'frontend/' 2>/dev/null; then cd C:/my-Project/Vidya_AI/VidyaAI/frontend && npx tsc --noEmit 2>&1 | head -20; fi"
           }
         ]
       }

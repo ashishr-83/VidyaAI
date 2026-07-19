@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VidyaAI — Study Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: 'Inter', sans-serif; background: #F1F3FB; color: #1a1a2e; min-height: 100vh; display: flex; }
+
+/* ═══════════════════════════
+   SIDEBAR
+═══════════════════════════ */
+.sidebar {
+  width: 220px; flex-shrink: 0; background: #0D1B3E;
+  min-height: 100vh; display: flex; flex-direction: column;
+  padding: 22px 0; position: sticky; top: 0; height: 100vh;
+}
+.sb-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 16px;
+}
+.sb-lm {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: linear-gradient(135deg,#FF6B00,#FF9800);
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+}
+.sb-lt { font-family: 'Poppins',sans-serif; font-size: 18px; font-weight: 800; color: #fff; }
+.sb-lt span { color: #FF6B00; }
+
+.sb-sec { padding: 0 10px; margin-bottom: 4px; }
+.sb-lbl {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.18); padding: 0 8px; margin-bottom: 5px;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+  border-radius: 9px; font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.15s;
+  margin-bottom: 2px; text-decoration: none;
+}
+.sb-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+.sb-item.on { background: rgba(255,107,0,0.16); color: #FF8C42; font-weight: 600; }
+.sb-ic { font-size: 16px; width: 20px; text-align: center; }
+.sb-bdg {
+  margin-left: auto; background: #FF6B00; color: #fff;
+  font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 8px;
+}
+.sb-foot { margin-top: auto; padding: 0 10px; }
+.sb-user {
+  display: flex; align-items: center; gap: 10px; padding: 11px 10px;
+  border-radius: 10px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.sb-av {
+  width: 33px; height: 33px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg,#FF6B00,#FF9800);
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.sb-un { font-size: 12px; font-weight: 700; color: #fff; }
+.sb-uc { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 1px; }
+
+/* ═══════════════════════════
+   MAIN LAYOUT
+═══════════════════════════ */
+.main-wrap {
+  flex: 1; overflow-y: auto; padding: 28px 28px 48px; min-width: 0;
+}
+
+/* Page header */
+.pg-hd {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 24px; gap: 16px; flex-wrap: wrap;
+}
+.pg-hd-l h1 {
+  font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 800;
+  color: #0D1B3E; letter-spacing: -0.5px;
+}
+.pg-hd-l p { font-size: 13px; color: #6B7280; margin-top: 3px; }
+.pg-hd-r { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+
+.btn-primary {
+  display: flex; align-items: center; gap: 7px; padding: 10px 18px;
+  border-radius: 10px; border: none; cursor: pointer;
+  background: linear-gradient(135deg,#FF6B00,#FF9800);
+  font-size: 13px; font-weight: 700; color: #fff; font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 14px rgba(255,107,0,0.3); transition: transform 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,0,0.4); }
+.btn-ghost {
+  display: flex; align-items: center; gap: 7px; padding: 10px 16px;
+  border-radius: 10px; border: 1.5px solid #D1D5DB; background: #fff;
+  font-size: 13px; font-weight: 600; color: #374151; cursor: pointer;
+  font-family: 'Inter', sans-serif; white-space: nowrap;
+}
+
+/* ═══════════════════════════
+   SETUP CARD (Collapsible)
+═══════════════════════════ */
+.setup-card {
+  background: #fff; border-radius: 18px; border: 1px solid #E5E7EB;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 22px;
+  overflow: hidden;
+}
+.setup-header {
+  padding: 18px 24px; display: flex; align-items: center; gap: 14px;
+  cursor: pointer; user-select: none;
+  border-bottom: 1px solid #F3F4F6;
+  background: linear-gradient(135deg,#0D1B3E,#1a237e);
+}
+.setup-header-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(255,107,0,0.2);
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.setup-header-text .title {
+  font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; color: #fff;
+}
+.setup-header-text .sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.setup-toggle {
+  margin-left: auto; width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); display: flex; align-items: center;
+  justify-content: center; font-size: 14px; color: #fff;
+  transition: transform 0.25s;
+}
+.setup-toggle.open { transform: rotate(180deg); }
+
+.setup-body { padding: 24px; display: none; }
+.setup-body.open { display: block; }
+
+/* Progress steps */
+.setup-steps {
+  display: flex; align-items: center; gap: 0; margin-bottom: 28px;
+}
+.sstep {
+  display: flex; align-items: center; gap: 8px; flex: 1;
+}
+.sstep:last-child { flex: none; }
+.sstep-dot {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; transition: all 0.2s;
+  border: 2px solid #E5E7EB; background: #fff; color: #9CA3AF;
+}
+.sstep-dot.done { background: #1B8A4E; border-color: #1B8A4E; color: #fff; }
+.sstep-dot.active { background: #FF6B00; border-color: #FF6B00; color: #fff; box-shadow: 0 0 0 4px rgba(255,107,0,0.15); }
+.sstep-label { font-size: 11px; font-weight: 600; color: #9CA3AF; white-space: nowrap; }
+.sstep-label.active { color: #FF6B00; }
+.sstep-label.done { color: #1B8A4E; }
+.sstep-line { flex: 1; height: 2px; background: #E5E7EB; margin: 0 8px; }
+.sstep-line.done { background: #1B8A4E; }
+
+/* Setup sections */
+.setup-section { margin-bottom: 28px; }
+.setup-section:last-child { margin-bottom: 0; }
+.sec-title {
+  font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700;
+  color: #0D1B3E; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.sec-title-icon {
+  width: 26px; height: 26px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+}
+
+/* Exam target selector */
+.exam-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px;
+}
+.exam-card {
+  border: 2px solid #E5E7EB; border-radius: 12px; padding: 14px 10px;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+  background: #FAFAFA;
+}
+.exam-card:hover { border-color: #FF6B00; background: rgba(255,107,0,0.03); }
+.exam-card.sel { border-color: #FF6B00; background: rgba(255,107,0,0.06); }
+.exam-card .ec-icon { font-size: 24px; margin-bottom: 6px; }
+.exam-card .ec-name { font-size: 12px; font-weight: 700; color: #0D1B3E; }
+.exam-card .ec-sub { font-size: 10px; color: #9CA3AF; margin-top: 2px; }
+
+/* Form grid */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.inp-group { display: flex; flex-direction: column; gap: 6px; }
+.inp-label { font-size: 11px; font-weight: 700; color: #6B7280; letter-spacing: 0.4px; text-transform: uppercase; }
+.inp-label .required { color: #FF6B00; margin-left: 2px; }
+.form-inp {
+  height: 42px; border: 1.5px solid #E5E7EB; border-radius: 10px;
+  padding: 0 13px; font-size: 13px; color: #374151; font-family: 'Inter', sans-serif;
+  background: #FAFAFA; outline: none; transition: all 0.2s; width: 100%;
+}
+.form-inp:focus { border-color: #FF6B00; background: #fff; box-shadow: 0 0 0 3px rgba(255,107,0,0.1); }
+.form-sel {
+  height: 42px; border: 1.5px solid #E5E7EB; border-radius: 10px;
+  padding: 0 13px; font-size: 13px; color: #374151; font-family: 'Inter', sans-serif;
+  background: #FAFAFA; outline: none; cursor: pointer; width: 100%;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+}
+
+/* Hours slider */
+.slider-wrap { display: flex; flex-direction: column; gap: 8px; }
+.slider-display {
+  display: flex; align-items: baseline; gap: 4px;
+}
+.slider-num {
+  font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 900; color: #FF6B00;
+}
+.slider-unit { font-size: 13px; color: #9CA3AF; font-weight: 500; }
+.range-input {
+  -webkit-appearance: none; width: 100%; height: 6px;
+  border-radius: 3px; background: #E5E7EB; outline: none; cursor: pointer;
+}
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg,#FF6B00,#FF9800);
+  cursor: pointer; box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+}
+.range-labels { display: flex; justify-content: space-between; font-size: 10px; color: #9CA3AF; }
+
+/* Subject toggle grid */
+.subject-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.subj-card {
+  border: 2px solid #E5E7EB; border-radius: 12px; padding: 12px 14px;
+  cursor: pointer; transition: all 0.2s; background: #FAFAFA;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.subj-card:hover { border-color: rgba(57,73,171,0.4); }
+.subj-card.sel-phy { border-color: #3949AB; background: rgba(57,73,171,0.05); }
+.subj-card.sel-che { border-color: #1B8A4E; background: rgba(27,138,78,0.05); }
+.subj-card.sel-mat { border-color: #FF6B00; background: rgba(255,107,0,0.05); }
+.subj-card.sel-bio { border-color: #7C3AED; background: rgba(124,58,237,0.05); }
+.subj-card.sel-eng { border-color: #D97706; background: rgba(217,119,6,0.05); }
+.subj-card.sel-sst { border-color: #0891B2; background: rgba(8,145,178,0.05); }
+.subj-top { display: flex; align-items: center; justify-content: space-between; }
+.subj-name { font-size: 13px; font-weight: 700; color: #0D1B3E; }
+.subj-check {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid #E5E7EB;
+  display: flex; align-items: center; justify-content: center; font-size: 9px;
+  background: #fff; transition: all 0.2s; flex-shrink: 0;
+}
+.subj-card.sel-phy .subj-check, .subj-card.sel-che .subj-check,
+.subj-card.sel-mat .subj-check, .subj-card.sel-bio .subj-check,
+.subj-card.sel-eng .subj-check, .subj-card.sel-sst .subj-check {
+  background: #1B8A4E; border-color: #1B8A4E; color: #fff;
+}
+.subj-icon { font-size: 18px; }
+.subj-priority {
+  display: flex; gap: 4px; margin-top: 4px;
+}
+.sp-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #E5E7EB; cursor: pointer;
+  transition: background 0.15s;
+}
+.sp-dot.active { background: #FF6B00; }
+.subj-priority-label { font-size: 9px; color: #9CA3AF; font-weight: 600; margin-top: 2px; }
+
+/* Day selector */
+.day-selector { display: flex; gap: 8px; flex-wrap: wrap; }
+.day-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 2px solid #E5E7EB;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  color: #6B7280; background: #fff;
+}
+.day-btn:hover { border-color: #FF6B00; color: #FF6B00; }
+.day-btn.on { background: #FF6B00; border-color: #FF6B00; color: #fff; box-shadow: 0 3px 10px rgba(255,107,0,0.3); }
+
+/* Time preference */
+.time-pref { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.tp-card {
+  border: 2px solid #E5E7EB; border-radius: 12px; padding: 13px 12px;
+  text-align: center; cursor: pointer; transition: all 0.2s; background: #FAFAFA;
+}
+.tp-card:hover { border-color: #FF6B00; background: rgba(255,107,0,0.03); }
+.tp-card.on { border-color: #FF6B00; background: rgba(255,107,0,0.07); }
+.tp-icon { font-size: 22px; margin-bottom: 5px; }
+.tp-name { font-size: 12px; font-weight: 700; color: #0D1B3E; }
+.tp-time { font-size: 10px; color: #9CA3AF; margin-top: 2px; }
+
+/* WhatsApp toggle */
+.wa-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(37,211,102,0.06); border: 1.5px solid rgba(37,211,102,0.2);
+}
+.wa-icon { font-size: 24px; flex-shrink: 0; }
+.wa-text .t { font-size: 13px; font-weight: 700; color: #166534; }
+.wa-text .s { font-size: 11px; color: #166534; opacity: 0.7; margin-top: 2px; }
+.toggle {
+  margin-left: auto; width: 44px; height: 24px; border-radius: 12px;
+  background: #25D366; position: relative; cursor: pointer; flex-shrink: 0;
+  transition: background 0.2s;
+}
+.toggle::after {
+  content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; top: 3px; left: 3px; transition: left 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle.off { background: #D1D5DB; }
+.toggle.off::after { left: 23px; }
+.wa-inp { flex: 1; }
+
+/* Generate button */
+.gen-btn-wrap { margin-top: 24px; display: flex; align-items: center; gap: 14px; }
+.btn-generate {
+  flex: 1; height: 52px; border-radius: 13px; border: none; cursor: pointer;
+  background: linear-gradient(135deg,#FF6B00,#FF9800);
+  font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 800; color: #fff;
+  box-shadow: 0 6px 24px rgba(255,107,0,0.35); transition: transform 0.15s, box-shadow 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,107,0,0.45); }
+.btn-generate:active { transform: translateY(0); }
+.gen-note { font-size: 11px; color: #9CA3AF; line-height: 1.5; max-width: 180px; }
+
+/* ═══════════════════════════
+   PLAN VIEW
+═══════════════════════════ */
+/* Exam countdown bar */
+.countdown-bar {
+  background: linear-gradient(135deg,#0D1B3E,#1a237e);
+  border-radius: 16px; padding: 18px 24px;
+  display: flex; align-items: center; gap: 24px;
+  margin-bottom: 22px; flex-wrap: wrap; gap: 16px;
+}
+.cd-item { display: flex; flex-direction: column; align-items: center; }
+.cd-num {
+  font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 900;
+  color: #fff; line-height: 1;
+}
+.cd-lbl { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.cd-sep { font-size: 24px; color: rgba(255,255,255,0.15); font-weight: 300; align-self: flex-end; padding-bottom: 6px; }
+.cd-right { margin-left: auto; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.cd-target {
+  display: flex; flex-direction: column; align-items: flex-end;
+}
+.cd-target .t { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.cd-target .v {
+  font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 800; color: #FF8C42; margin-top: 2px;
+}
+.cd-progress-wrap { display: flex; flex-direction: column; gap: 6px; min-width: 180px; }
+.cd-progress-top { display: flex; justify-content: space-between; font-size: 11px; }
+.cd-progress-top .l { color: rgba(255,255,255,0.5); }
+.cd-progress-top .r { color: #fff; font-weight: 700; }
+.cd-pbar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.cd-pfill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#FF6B00,#FFD600); }
+
+/* Weekly strip */
+.week-section { margin-bottom: 22px; }
+.section-head {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; color: #0D1B3E;
+}
+.week-nav { display: flex; align-items: center; gap: 12px; }
+.wn-btn {
+  width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #E5E7EB;
+  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #374151; transition: all 0.15s;
+}
+.wn-btn:hover { border-color: #FF6B00; color: #FF6B00; }
+.wn-range { font-size: 12px; font-weight: 600; color: #6B7280; white-space: nowrap; }
+
+/* Week grid — the signature element */
+.week-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
+}
+.day-col {
+  background: #fff; border-radius: 14px; border: 1.5px solid #E5E7EB;
+  overflow: hidden; cursor: pointer; transition: all 0.2s; min-height: 160px;
+  display: flex; flex-direction: column;
+}
+.day-col:hover { border-color: #FF6B00; box-shadow: 0 4px 16px rgba(255,107,0,0.1); transform: translateY(-2px); }
+.day-col.today { border-color: #FF6B00; box-shadow: 0 4px 16px rgba(255,107,0,0.15); }
+.day-col.past { opacity: 0.6; }
+
+.dc-head {
+  padding: 10px 10px 8px; border-bottom: 1px solid #F3F4F6;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.dc-day { font-size: 10px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.5px; }
+.dc-date {
+  font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 800; color: #374151;
+}
+.day-col.today .dc-date {
+  width: 30px; height: 30px; border-radius: 50%; background: #FF6B00;
+  color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.today-pill {
+  font-size: 8px; font-weight: 700; background: #FF6B00; color: #fff;
+  padding: 1px 6px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.dc-blocks { padding: 8px 8px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.task-block {
+  border-radius: 7px; padding: 5px 7px;
+  font-size: 10px; font-weight: 600; line-height: 1.3;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.task-block .tb-subj { font-size: 9px; font-weight: 800; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.3px; }
+.task-block .tb-topic { font-size: 10px; font-weight: 600; }
+.task-block .tb-dur { font-size: 9px; opacity: 0.65; margin-top: 1px; }
+
+.tb-phy { background: rgba(57,73,171,0.1); color: #1A237E; }
+.tb-che { background: rgba(27,138,78,0.1); color: #14532D; }
+.tb-mat { background: rgba(255,107,0,0.1); color: #7C2D12; }
+.tb-bio { background: rgba(124,58,237,0.1); color: #3B0764; }
+.tb-rest { background: rgba(249,168,37,0.12); color: #78350F; }
+
+.task-block.done { opacity: 0.5; }
+.task-block.done .tb-topic { text-decoration: line-through; }
+
+.dc-footer {
+  padding: 6px 8px; display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid #F3F4F6;
+}
+.dc-total { font-size: 10px; font-weight: 700; color: #9CA3AF; }
+.dc-done { font-size: 10px; font-weight: 700; color: #1B8A4E; }
+
+/* ── Today detail + right column ── */
+.plan-body { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
+
+/* Today's task list */
+.today-card {
+  background: #fff; border-radius: 16px; border: 1px solid #E5E7EB;
+  overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.today-card-head {
+  padding: 16px 20px; border-bottom: 1px solid #F3F4F6;
+  background: linear-gradient(135deg,#0D1B3E,#1a237e);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tch-left .date { font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.tch-left .title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 800; color: #fff; }
+.tch-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.tch-progress-ring { position: relative; width: 52px; height: 52px; }
+.ring-svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; }
+.ring-fill { fill: none; stroke: #FF6B00; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 126; stroke-dashoffset: 63; transition: stroke-dashoffset 0.5s; }
+.ring-label {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff;
+}
+
+.task-list { padding: 4px 0; }
+.task-row {
+  display: flex; align-items: flex-start; gap: 14px; padding: 14px 20px;
+  border-bottom: 1px solid #F9FAFB; transition: background 0.15s; cursor: pointer;
+}
+.task-row:last-child { border-bottom: none; }
+.task-row:hover { background: #FAFAFA; }
+.task-row.completed { opacity: 0.55; }
+
+.tr-check {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+  transition: all 0.2s; cursor: pointer;
+}
+.tr-check.done { background: #1B8A4E; color: #fff; }
+.tr-check.todo { border: 2px solid #D1D5DB; background: #fff; }
+.tr-check.todo:hover { border-color: #1B8A4E; }
+
+.tr-body { flex: 1; min-width: 0; }
+.tr-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.tr-subj-tag {
+  font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 6px;
+  text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0;
+}
+.tag-phy { background: rgba(57,73,171,0.1); color: #3949AB; }
+.tag-che { background: rgba(27,138,78,0.1); color: #1B8A4E; }
+.tag-mat { background: rgba(255,107,0,0.1); color: #FF6B00; }
+.tag-bio { background: rgba(124,58,237,0.1); color: #7C3AED; }
+.tr-type {
+  font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 5px;
+  text-transform: uppercase; letter-spacing: 0.3px;
+}
+.type-learn { background: rgba(57,73,171,0.08); color: #3949AB; }
+.type-revise { background: rgba(217,119,6,0.1); color: #D97706; }
+.type-practice { background: rgba(255,107,0,0.08); color: #FF6B00; }
+.type-test { background: rgba(220,38,38,0.08); color: #DC2626; }
+
+.tr-topic { font-size: 13px; font-weight: 600; color: #111827; }
+.task-row.completed .tr-topic { text-decoration: line-through; color: #9CA3AF; }
+.tr-meta { font-size: 11px; color: #9CA3AF; margin-top: 3px; }
+
+.tr-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.tr-dur {
+  font-size: 12px; font-weight: 700; color: #374151;
+  display: flex; align-items: center; gap: 4px;
+}
+.dur-icon { font-size: 11px; }
+.tr-doubt-btn {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 8px;
+  background: rgba(255,107,0,0.08); color: #FF6B00; cursor: pointer;
+  border: 1px solid rgba(255,107,0,0.15); white-space: nowrap;
+  transition: all 0.15s;
+}
+.tr-doubt-btn:hover { background: rgba(255,107,0,0.15); }
+
+/* Add task row */
+.add-task-row {
+  padding: 12px 20px; display: flex; align-items: center; gap: 10px;
+  border-top: 1px dashed #E5E7EB; cursor: pointer; color: #9CA3AF;
+  font-size: 13px; font-weight: 600; transition: color 0.15s;
+}
+.add-task-row:hover { color: #FF6B00; }
+
+/* Right column cards */
+.right-col { display: flex; flex-direction: column; gap: 16px; }
+
+/* Streak */
+.streak-card {
+  background: linear-gradient(135deg,#1B8A4E,#166534);
+  border-radius: 16px; padding: 18px; display: flex; align-items: center; gap: 14px;
+}
+.streak-num { font-family: 'Poppins', sans-serif; font-size: 46px; font-weight: 900; color: #fff; line-height: 1; }
+.streak-info .t { font-size: 14px; font-weight: 700; color: #fff; }
+.streak-info .s { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 3px; line-height: 1.4; }
+.streak-em { font-size: 38px; margin-left: auto; }
+
+/* Stats mini card */
+.mini-stats {
+  background: #fff; border-radius: 16px; border: 1px solid #E5E7EB;
+  padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.ms-title { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700; color: #0D1B3E; margin-bottom: 14px; }
+.ms-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.ms-row:last-child { margin-bottom: 0; }
+.ms-icon { font-size: 18px; width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ms-info { flex: 1; min-width: 0; }
+.ms-label { font-size: 11px; color: #9CA3AF; font-weight: 500; }
+.ms-val { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 800; color: #0D1B3E; }
+
+/* Weakness mini */
+.weakness-card {
+  background: #fff; border-radius: 16px; border: 1px solid #E5E7EB;
+  overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.wc-head { padding: 14px 18px; border-bottom: 1px solid #F3F4F6; display: flex; align-items: center; justify-content: space-between; }
+.wc-title { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700; color: #0D1B3E; }
+.wc-link { font-size: 11px; color: #FF6B00; font-weight: 700; cursor: pointer; }
+.wc-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+.wi { }
+.wi-top2 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.wi-concept { font-size: 12px; font-weight: 600; color: #374151; }
+.wi-score { font-size: 11px; font-weight: 700; }
+.ws-weak { color: #DC2626; } .ws-med { color: #D97706; } .ws-str { color: #1B8A4E; }
+.wbar2 { height: 5px; background: #F3F4F6; border-radius: 3px; overflow: hidden; }
+.wfill2 { height: 100%; border-radius: 3px; }
+.wf-r { background: linear-gradient(90deg,#FCA5A5,#DC2626); }
+.wf-y { background: linear-gradient(90deg,#FCD34D,#D97706); }
+.wf-g { background: linear-gradient(90deg,#6EE7B7,#1B8A4E); }
+
+/* WhatsApp reminder card */
+.wa-card {
+  background: linear-gradient(135deg,rgba(37,211,102,0.08),rgba(37,211,102,0.03));
+  border: 1.5px solid rgba(37,211,102,0.25); border-radius: 16px; padding: 16px;
+}
+.wac-title { font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 3px; display: flex; align-items: center; gap: 7px; }
+.wac-sub { font-size: 11px; color: #166534; opacity: 0.7; margin-bottom: 10px; line-height: 1.5; }
+.wac-preview {
+  background: #E7FEF0; border-radius: 10px; padding: 10px 12px;
+  font-size: 11px; color: #166534; line-height: 1.6;
+  border: 1px solid rgba(37,211,102,0.2);
+}
+.wac-preview .sender { font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+
+/* Notification toast */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: #0D1B3E; color: #fff; padding: 14px 20px;
+  border-radius: 12px; font-size: 13px; font-weight: 600;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  display: flex; align-items: center; gap: 10px;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 999; max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* Tabs */
+.view-tabs { display: flex; gap: 4px; background: #F3F4F6; border-radius: 10px; padding: 3px; }
+.vtab {
+  padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  color: #6B7280; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.vtab.on { background: #fff; color: #0D1B3E; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .plan-body { grid-template-columns: 1fr; }
+  .week-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .exam-grid { grid-template-columns: repeat(2, 1fr); }
+  .subject-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-lm">🎓</div>
+    <div class="sb-lt">Vidya<span>AI</span></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Main</div>
+    <div class="sb-item"><div class="sb-ic">🏠</div>Dashboard</div>
+    <div class="sb-item"><div class="sb-ic">🎤</div>Doubt Solver<div class="sb-bdg">2</div></div>
+    <div class="sb-item on"><div class="sb-ic">📅</div>Study Plan</div>
+    <div class="sb-item"><div class="sb-ic">📊</div>Progress</div>
+    <div class="sb-item"><div class="sb-ic">⚔️</div>Battles</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Resources</div>
+    <div class="sb-item"><div class="sb-ic">📄</div>Past Papers</div>
+    <div class="sb-item"><div class="sb-ic">✍️</div>Answer Coach</div>
+    <div class="sb-item"><div class="sb-ic">🔖</div>Bookmarks</div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av">R</div>
+      <div>
+        <div class="sb-un">Rahul Singh</div>
+        <div class="sb-uc">Class 12 · JEE · Plus ✨</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main-wrap">
+
+  <!-- Page header -->
+  <div class="pg-hd">
+    <div class="pg-hd-l">
+      <h1>📅 Study Plan</h1>
+      <p>AI-generated daily schedule based on your exam date, subjects, and weak areas</p>
+    </div>
+    <div class="pg-hd-r">
+      <div class="view-tabs">
+        <div class="vtab on" onclick="setTab('week',this)">Week View</div>
+        <div class="vtab" onclick="setTab('month',this)">Month</div>
+        <div class="vtab" onclick="setTab('syllabus',this)">Syllabus</div>
+      </div>
+      <button class="btn-ghost" onclick="toggleSetup()">⚙️ Edit Plan</button>
+      <button class="btn-primary" onclick="showToast('🤖 AI ne tumhara plan update kar diya!')">🔄 Regenerate</button>
+    </div>
+  </div>
+
+  <!-- ── SETUP CARD ── -->
+  <div class="setup-card" id="setupCard">
+    <div class="setup-header" onclick="toggleSetup()" id="setupHeader">
+      <div class="setup-header-icon">🎯</div>
+      <div class="setup-header-text">
+        <div class="title">Apna Study Plan Setup Karo</div>
+        <div class="sub">Exam date, subjects aur study hours daal ke personalized plan generate karo</div>
+      </div>
+      <div class="setup-toggle open" id="setupToggle">▼</div>
+    </div>
+
+    <div class="setup-body open" id="setupBody">
+
+      <!-- Progress steps -->
+      <div class="setup-steps">
+        <div class="sstep">
+          <div class="sstep-dot active" id="step1dot">1</div>
+          <div class="sstep-label active" id="step1lbl">Exam Target</div>
+        </div>
+        <div class="sstep-line" id="line1"></div>
+        <div class="sstep">
+          <div class="sstep-dot" id="step2dot">2</div>
+          <div class="sstep-label" id="step2lbl">Subjects</div>
+        </div>
+        <div class="sstep-line" id="line2"></div>
+        <div class="sstep">
+          <div class="sstep-dot" id="step3dot">3</div>
+          <div class="sstep-label" id="step3lbl">Schedule</div>
+        </div>
+        <div class="sstep-line" id="line3"></div>
+        <div class="sstep">
+          <div class="sstep-dot" id="step4dot">4</div>
+          <div class="sstep-label" id="step4lbl">Reminders</div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Exam Target -->
+      <div class="setup-section" id="sec1">
+        <div class="sec-title">
+          <div class="sec-title-icon" style="background:rgba(255,107,0,0.1);">🎯</div>
+          Exam Target aur Date
+        </div>
+        <div class="exam-grid">
+          <div class="exam-card sel" onclick="selExam(this,'JEE Mains')">
+            <div class="ec-icon">🏛️</div>
+            <div class="ec-name">JEE Mains</div>
+            <div class="ec-sub">Engg. Entrance</div>
+          </div>
+          <div class="exam-card" onclick="selExam(this,'JEE Advanced')">
+            <div class="ec-icon">🚀</div>
+            <div class="ec-name">JEE Advanced</div>
+            <div class="ec-sub">IIT Entrance</div>
+          </div>
+          <div class="exam-card" onclick="selExam(this,'NEET')">
+            <div class="ec-icon">⚕️</div>
+            <div class="ec-name">NEET</div>
+            <div class="ec-sub">Medical Entrance</div>
+          </div>
+          <div class="exam-card" onclick="selExam(this,'CBSE Boards')">
+            <div class="ec-icon">📋</div>
+            <div class="ec-name">CBSE Boards</div>
+            <div class="ec-sub">Class 10 / 12</div>
+          </div>
+          <div class="exam-card" onclick="selExam(this,'ICSE Boards')">
+            <div class="ec-icon">📘</div>
+            <div class="ec-name">ICSE Boards</div>
+            <div class="ec-sub">Class 10 / 12</div>
+          </div>
+          <div class="exam-card" onclick="selExam(this,'State Board')">
+            <div class="ec-icon">🗺️</div>
+            <div class="ec-name">State Board</div>
+            <div class="ec-sub">UP / MH / TN etc.</div>
+          </div>
+          <div class="exam-card" onclick="selExam(this,'CUET')">
+            <div class="ec-icon">🎓</div>
+            <div class="ec-name">CUET</div>
+            <div class="ec-sub">UG Entrance</div>
+          </div>
+          <div class="exam-card" onclick="selExam(this,'Other')">
+            <div class="ec-icon">✏️</div>
+            <div class="ec-name">Other</div>
+            <div class="ec-sub">Custom exam</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="inp-group">
+            <div class="inp-label">Exam Date <span class="required">*</span></div>
+            <input type="date" class="form-inp" value="2026-01-15" id="examDate" onchange="updateCountdown()">
+          </div>
+          <div class="inp-group">
+            <div class="inp-label">Current Class / Grade <span class="required">*</span></div>
+            <select class="form-sel">
+              <option>Class 12 (Current)</option>
+              <option>Class 11</option>
+              <option>Class 10</option>
+              <option>Class 9</option>
+              <option>Class 8</option>
+              <option>Class 7</option>
+              <option>Class 6</option>
+              <option>Dropper / Repeater</option>
+            </select>
+          </div>
+          <div class="inp-group">
+            <div class="inp-label">Board / Curriculum</div>
+            <select class="form-sel">
+              <option>CBSE</option>
+              <option>ICSE</option>
+              <option>UP Board</option>
+              <option>Maharashtra Board</option>
+              <option>Tamil Nadu Board</option>
+              <option>Karnataka Board</option>
+              <option>Other State Board</option>
+            </select>
+          </div>
+          <div class="inp-group">
+            <div class="inp-label">Target Score / Rank</div>
+            <input type="text" class="form-inp" placeholder="e.g. Top 1000 AIR / 90%+">
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Subjects -->
+      <div class="setup-section" id="sec2">
+        <div class="sec-title">
+          <div class="sec-title-icon" style="background:rgba(57,73,171,0.1);">📚</div>
+          Subjects aur Weak Areas
+          <span style="font-size:11px;color:#9CA3AF;font-weight:500;">( Priority dots: 🔴 high → 🟡 medium → 🟢 low )</span>
+        </div>
+        <div class="subject-grid">
+          <div class="subj-card sel-phy" onclick="toggleSubj(this,'sel-phy')">
+            <div class="subj-top">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span class="subj-icon">⚛️</span>
+                <span class="subj-name">Physics</span>
+              </div>
+              <div class="subj-check">✓</div>
+            </div>
+            <div>
+              <div class="subj-priority">
+                <div class="sp-dot active" onclick="setPriority(event,this,0)"></div>
+                <div class="sp-dot active" onclick="setPriority(event,this,1)"></div>
+                <div class="sp-dot active" onclick="setPriority(event,this,2)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,3)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,4)"></div>
+              </div>
+              <div class="subj-priority-label">Weakness: High</div>
+            </div>
+          </div>
+          <div class="subj-card sel-che" onclick="toggleSubj(this,'sel-che')">
+            <div class="subj-top">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span class="subj-icon">🧪</span>
+                <span class="subj-name">Chemistry</span>
+              </div>
+              <div class="subj-check">✓</div>
+            </div>
+            <div>
+              <div class="subj-priority">
+                <div class="sp-dot active" onclick="setPriority(event,this,0)"></div>
+                <div class="sp-dot active" onclick="setPriority(event,this,1)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,2)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,3)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,4)"></div>
+              </div>
+              <div class="subj-priority-label">Weakness: Medium</div>
+            </div>
+          </div>
+          <div class="subj-card sel-mat" onclick="toggleSubj(this,'sel-mat')">
+            <div class="subj-top">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span class="subj-icon">📐</span>
+                <span class="subj-name">Mathematics</span>
+              </div>
+              <div class="subj-check">✓</div>
+            </div>
+            <div>
+              <div class="subj-priority">
+                <div class="sp-dot active" onclick="setPriority(event,this,0)"></div>
+                <div class="sp-dot active" onclick="setPriority(event,this,1)"></div>
+                <div class="sp-dot active" onclick="setPriority(event,this,2)"></div>
+                <div class="sp-dot active" onclick="setPriority(event,this,3)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,4)"></div>
+              </div>
+              <div class="subj-priority-label">Weakness: Very High</div>
+            </div>
+          </div>
+          <div class="subj-card" onclick="toggleSubj(this,'sel-bio')">
+            <div class="subj-top">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span class="subj-icon">🧬</span>
+                <span class="subj-name">Biology</span>
+              </div>
+              <div class="subj-check"></div>
+            </div>
+            <div>
+              <div class="subj-priority">
+                <div class="sp-dot" onclick="setPriority(event,this,0)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,1)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,2)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,3)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,4)"></div>
+              </div>
+              <div class="subj-priority-label">Not selected</div>
+            </div>
+          </div>
+          <div class="subj-card" onclick="toggleSubj(this,'sel-eng')">
+            <div class="subj-top">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span class="subj-icon">📝</span>
+                <span class="subj-name">English</span>
+              </div>
+              <div class="subj-check"></div>
+            </div>
+            <div>
+              <div class="subj-priority">
+                <div class="sp-dot" onclick="setPriority(event,this,0)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,1)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,2)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,3)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,4)"></div>
+              </div>
+              <div class="subj-priority-label">Not selected</div>
+            </div>
+          </div>
+          <div class="subj-card" onclick="toggleSubj(this,'sel-sst')">
+            <div class="subj-top">
+              <div style="display:flex;align-items:center;gap:7px;">
+                <span class="subj-icon">🌍</span>
+                <span class="subj-name">Social Science</span>
+              </div>
+              <div class="subj-check"></div>
+            </div>
+            <div>
+              <div class="subj-priority">
+                <div class="sp-dot" onclick="setPriority(event,this,0)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,1)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,2)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,3)"></div>
+                <div class="sp-dot" onclick="setPriority(event,this,4)"></div>
+              </div>
+              <div class="subj-priority-label">Not selected</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Schedule -->
+      <div class="setup-section" id="sec3">
+        <div class="sec-title">
+          <div class="sec-title-icon" style="background:rgba(27,138,78,0.1);">⏱</div>
+          Daily Schedule Preferences
+        </div>
+        <div class="form-grid" style="margin-bottom:18px;">
+          <div class="inp-group">
+            <div class="inp-label">Study hours per day <span class="required">*</span></div>
+            <div class="slider-wrap">
+              <div class="slider-display">
+                <span class="slider-num" id="hoursDisplay">6</span>
+                <span class="slider-unit">hours / day</span>
+              </div>
+              <input type="range" class="range-input" min="2" max="12" value="6" id="hoursSlider" oninput="document.getElementById('hoursDisplay').textContent=this.value">
+              <div class="range-labels"><span>2h (min)</span><span>7h (ideal)</span><span>12h (max)</span></div>
+            </div>
+          </div>
+          <div class="inp-group">
+            <div class="inp-label">Preferred study time</div>
+            <div class="time-pref">
+              <div class="tp-card on" onclick="selTime(this)">
+                <div class="tp-icon">🌅</div>
+                <div class="tp-name">Morning</div>
+                <div class="tp-time">5am – 12pm</div>
+              </div>
+              <div class="tp-card" onclick="selTime(this)">
+                <div class="tp-icon">☀️</div>
+                <div class="tp-name">Afternoon</div>
+                <div class="tp-time">12pm – 5pm</div>
+              </div>
+              <div class="tp-card" onclick="selTime(this)">
+                <div class="tp-icon">🌙</div>
+                <div class="tp-name">Evening</div>
+                <div class="tp-time">5pm – 12am</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="inp-group" style="margin-bottom:18px;">
+          <div class="inp-label">Which days will you study? <span class="required">*</span></div>
+          <div class="day-selector">
+            <div class="day-btn on" onclick="toggleDay(this)">Mon</div>
+            <div class="day-btn on" onclick="toggleDay(this)">Tue</div>
+            <div class="day-btn on" onclick="toggleDay(this)">Wed</div>
+            <div class="day-btn on" onclick="toggleDay(this)">Thu</div>
+            <div class="day-btn on" onclick="toggleDay(this)">Fri</div>
+            <div class="day-btn on" onclick="toggleDay(this)">Sat</div>
+            <div class="day-btn" onclick="toggleDay(this)">Sun</div>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-3">
+          <div class="inp-group">
+            <div class="inp-label">Short break duration</div>
+            <select class="form-sel">
+              <option>5 minutes</option>
+              <option selected>10 minutes</option>
+              <option>15 minutes</option>
+              <option>20 minutes</option>
+            </select>
+          </div>
+          <div class="inp-group">
+            <div class="inp-label">Session length</div>
+            <select class="form-sel">
+              <option>30 min (short)</option>
+              <option selected>45 min (Pomodoro)</option>
+              <option>60 min</option>
+              <option>90 min (deep)</option>
+            </select>
+          </div>
+          <div class="inp-group">
+            <div class="inp-label">Mock test frequency</div>
+            <select class="form-sel">
+              <option>Daily</option>
+              <option selected>Weekly</option>
+              <option>Every 2 weeks</option>
+              <option>Monthly</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Reminders -->
+      <div class="setup-section" id="sec4">
+        <div class="sec-title">
+          <div class="sec-title-icon" style="background:rgba(37,211,102,0.1);">🔔</div>
+          Reminders aur Notifications
+        </div>
+
+        <div class="wa-row" style="margin-bottom:14px;">
+          <div class="wa-icon">📱</div>
+          <div class="wa-text">
+            <div class="t">WhatsApp Morning Reminder</div>
+            <div class="s">Roz subah 7 baje aaj ka plan WhatsApp pe milega</div>
+          </div>
+          <div class="toggle" id="waToggle" onclick="toggleWA()"></div>
+        </div>
+
+        <div class="form-grid" id="waFields">
+          <div class="inp-group">
+            <div class="inp-label">WhatsApp Number</div>
+            <input type="tel" class="form-inp" placeholder="+91 98765 43210" value="+91 ">
+          </div>
+          <div class="inp-group">
+            <div class="inp-label">Reminder Time</div>
+            <input type="time" class="form-inp" value="07:00">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+          <div class="wa-row" style="margin-bottom:0;padding:12px 14px;">
+            <div class="wa-icon" style="font-size:18px;">📊</div>
+            <div class="wa-text">
+              <div class="t" style="font-size:12px;">Weekly Progress to Parents</div>
+              <div class="s" style="font-size:10px;">Parent ke number pe Sunday report</div>
+            </div>
+            <div class="toggle on" style="width:38px;height:20px;flex-shrink:0;" id="parentToggle">
+              <style>#parentToggle::after{width:14px;height:14px;top:3px;left:21px;}</style>
+            </div>
+          </div>
+          <div class="wa-row" style="margin-bottom:0;padding:12px 14px;">
+            <div class="wa-icon" style="font-size:18px;">🔕</div>
+            <div class="wa-text">
+              <div class="t" style="font-size:12px;">Do Not Disturb Mode</div>
+              <div class="s" style="font-size:10px;">Study sessions ke during notifications band</div>
+            </div>
+            <div class="toggle on" style="width:38px;height:20px;flex-shrink:0;">
+              <style>.toggle-sm::after{width:14px;height:14px;top:3px;left:21px;}</style>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate -->
+      <div class="gen-btn-wrap">
+        <button class="btn-generate" onclick="generatePlan()">
+          🤖 AI Plan Generate Karo
+        </button>
+        <div class="gen-note">
+          AI tumhare weak concepts, exam date aur available hours ke hisaab se plan banayega
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PLAN VIEW ── -->
+
+  <!-- Countdown bar -->
+  <div class="countdown-bar">
+    <div class="cd-item">
+      <div class="cd-num" id="cdDays">184</div>
+      <div class="cd-lbl">Days</div>
+    </div>
+    <div class="cd-sep">:</div>
+    <div class="cd-item">
+      <div class="cd-num">14</div>
+      <div class="cd-lbl">Hours</div>
+    </div>
+    <div class="cd-sep">:</div>
+    <div class="cd-item">
+      <div class="cd-num">32</div>
+      <div class="cd-lbl">Mins</div>
+    </div>
+    <div class="cd-right">
+      <div class="cd-target">
+        <div class="t">Exam Target</div>
+        <div class="v" id="cdTarget">JEE Mains 2026</div>
+      </div>
+      <div class="cd-progress-wrap">
+        <div class="cd-progress-top">
+          <div class="l">Syllabus Progress</div>
+          <div class="r">68%</div>
+        </div>
+        <div class="cd-pbar"><div class="cd-pfill" style="width:68%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Week strip -->
+  <div class="week-section">
+    <div class="section-head">
+      <div class="section-title">This Week's Plan</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="week-nav">
+          <div class="wn-btn">‹</div>
+          <div class="wn-range">14 Jul – 20 Jul 2025</div>
+          <div class="wn-btn">›</div>
+        </div>
+        <button class="btn-ghost" style="font-size:12px;padding:7px 13px;">📥 Export PDF</button>
+      </div>
+    </div>
+
+    <div class="week-grid">
+      <!-- Monday (past) -->
+      <div class="day-col past">
+        <div class="dc-head">
+          <div class="dc-day">Mon</div>
+          <div class="dc-date">14</div>
+        </div>
+        <div class="dc-blocks">
+          <div class="task-block tb-phy done"><div class="tb-subj">Physics</div><div class="tb-topic">Thermo Laws</div><div class="tb-dur">45 min</div></div>
+          <div class="task-block tb-che done"><div class="tb-subj">Chemistry</div><div class="tb-topic">Org. Reactions</div><div class="tb-dur">40 min</div></div>
+          <div class="task-block tb-mat done"><div class="tb-subj">Maths</div><div class="tb-topic">20 MCQs</div><div class="tb-dur">30 min</div></div>
+        </div>
+        <div class="dc-footer">
+          <div class="dc-total">1h 55m</div>
+          <div class="dc-done">✓ Done</div>
+        </div>
+      </div>
+      <!-- Tuesday (today) -->
+      <div class="day-col today">
+        <div class="dc-head">
+          <div class="dc-day">Tue</div>
+          <div class="dc-date"><span style="width:30px;height:30px;border-radius:50%;background:#FF6B00;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;">15</span></div>
+          <div class="today-pill">Today</div>
+        </div>
+        <div class="dc-blocks">
+          <div class="task-block tb-phy done"><div class="tb-subj">Physics</div><div class="tb-topic">Impulse & Momentum</div><div class="tb-dur">45 min ✓</div></div>
+          <div class="task-block tb-mat"><div class="tb-subj">Maths</div><div class="tb-topic">Integration Parts</div><div class="tb-dur">50 min</div></div>
+          <div class="task-block tb-che"><div class="tb-subj">Chemistry</div><div class="tb-topic">SN1 vs SN2</div><div class="tb-dur">40 min</div></div>
+          <div class="task-block tb-rest"><div class="tb-subj">Practice</div><div class="tb-topic">25 MCQs Mixed</div><div class="tb-dur">30 min</div></div>
+        </div>
+        <div class="dc-footer">
+          <div class="dc-total">2h 45m</div>
+          <div class="dc-done" style="color:#D97706;">1/4 done</div>
+        </div>
+      </div>
+      <!-- Wed -->
+      <div class="day-col">
+        <div class="dc-head"><div class="dc-day">Wed</div><div class="dc-date">16</div></div>
+        <div class="dc-blocks">
+          <div class="task-block tb-mat"><div class="tb-subj">Maths</div><div class="tb-topic">Differential Eq.</div><div class="tb-dur">60 min</div></div>
+          <div class="task-block tb-phy"><div class="tb-subj">Physics</div><div class="tb-topic">Optics Revision</div><div class="tb-dur">45 min</div></div>
+          <div class="task-block tb-che"><div class="tb-subj">Chemistry</div><div class="tb-topic">Electrochemistry</div><div class="tb-dur">40 min</div></div>
+        </div>
+        <div class="dc-footer"><div class="dc-total">2h 25m</div><div class="dc-done" style="color:#9CA3AF;">Upcoming</div></div>
+      </div>
+      <!-- Thu -->
+      <div class="day-col">
+        <div class="dc-head"><div class="dc-day">Thu</div><div class="dc-date">17</div></div>
+        <div class="dc-blocks">
+          <div class="task-block tb-phy"><div class="tb-subj">Physics</div><div class="tb-topic">Waves & Sound</div><div class="tb-dur">50 min</div></div>
+          <div class="task-block tb-mat"><div class="tb-subj">Maths</div><div class="tb-topic">Vector Algebra</div><div class="tb-dur">45 min</div></div>
+          <div class="task-block tb-rest"><div class="tb-subj">Mock Test</div><div class="tb-topic">Physics Full</div><div class="tb-dur">90 min</div></div>
+        </div>
+        <div class="dc-footer"><div class="dc-total">3h 05m</div><div class="dc-done" style="color:#9CA3AF;">Upcoming</div></div>
+      </div>
+      <!-- Fri -->
+      <div class="day-col">
+        <div class="dc-head"><div class="dc-day">Fri</div><div class="dc-date">18</div></div>
+        <div class="dc-blocks">
+          <div class="task-block tb-che"><div class="tb-subj">Chemistry</div><div class="tb-topic">P-Block Elements</div><div class="tb-dur">60 min</div></div>
+          <div class="task-block tb-mat"><div class="tb-subj">Maths</div><div class="tb-topic">3D Geometry</div><div class="tb-dur">50 min</div></div>
+          <div class="task-block tb-phy"><div class="tb-subj">Physics</div><div class="tb-topic">Semiconductors</div><div class="tb-dur">40 min</div></div>
+        </div>
+        <div class="dc-footer"><div class="dc-total">2h 30m</div><div class="dc-done" style="color:#9CA3AF;">Upcoming</div></div>
+      </div>
+      <!-- Sat -->
+      <div class="day-col">
+        <div class="dc-head"><div class="dc-day">Sat</div><div class="dc-date">19</div></div>
+        <div class="dc-blocks">
+          <div class="task-block tb-rest"><div class="tb-subj">Full Mock</div><div class="tb-topic">JEE Practice Paper</div><div class="tb-dur">3 hrs</div></div>
+          <div class="task-block tb-phy"><div class="tb-subj">Physics</div><div class="tb-topic">Error Analysis</div><div class="tb-dur">30 min</div></div>
+        </div>
+        <div class="dc-footer"><div class="dc-total">3h 30m</div><div class="dc-done" style="color:#9CA3AF;">Upcoming</div></div>
+      </div>
+      <!-- Sun (off) -->
+      <div class="day-col" style="opacity:0.4;">
+        <div class="dc-head"><div class="dc-day">Sun</div><div class="dc-date">20</div></div>
+        <div class="dc-blocks">
+          <div style="text-align:center;padding:20px 8px;color:#9CA3AF;">
+            <div style="font-size:24px;margin-bottom:6px;">😴</div>
+            <div style="font-size:11px;font-weight:600;">Rest Day</div>
+            <div style="font-size:10px;margin-top:3px;">Revision only if needed</div>
+          </div>
+        </div>
+        <div class="dc-footer"><div class="dc-total">—</div><div class="dc-done" style="color:#9CA3AF;">Rest</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's tasks + right column -->
+  <div class="plan-body">
+
+    <!-- Today's task list -->
+    <div class="today-card">
+      <div class="today-card-head">
+        <div class="tch-left">
+          <div class="date">Tuesday, 15 July 2025</div>
+          <div class="title">Aaj Ka Plan 📋</div>
+        </div>
+        <div class="tch-right">
+          <div class="tch-progress-ring">
+            <svg class="ring-svg" width="52" height="52" viewBox="0 0 52 52">
+              <circle class="ring-bg" cx="26" cy="26" r="20"/>
+              <circle class="ring-fill" cx="26" cy="26" r="20"/>
+            </svg>
+            <div class="ring-label">1/4</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-list">
+        <!-- Task 1 — Done -->
+        <div class="task-row completed" onclick="toggleTask(this)">
+          <div class="tr-check done">✓</div>
+          <div class="tr-body">
+            <div class="tr-top">
+              <div class="tr-subj-tag tag-phy">Physics</div>
+              <div class="tr-type type-revise">Revise</div>
+            </div>
+            <div class="tr-topic">Impulse & Momentum — Concept Recap</div>
+            <div class="tr-meta">Chapter: Laws of Motion · NCERT + HC Verma Ex. 9.1–9.5</div>
+          </div>
+          <div class="tr-right">
+            <div class="tr-dur"><span class="dur-icon">⏱</span>45 min</div>
+          </div>
+        </div>
+
+        <!-- Task 2 — Active -->
+        <div class="task-row" onclick="toggleTask(this)" style="background:#FFFBF5;border-left:3px solid #FF6B00;">
+          <div class="tr-check todo"></div>
+          <div class="tr-body">
+            <div class="tr-top">
+              <div class="tr-subj-tag tag-mat">Maths</div>
+              <div class="tr-type type-learn">Learn</div>
+              <span style="font-size:10px;font-weight:700;color:#FF6B00;background:rgba(255,107,0,0.1);padding:2px 7px;border-radius:6px;">🔥 High Priority</span>
+            </div>
+            <div class="tr-topic">Integration by Parts — Full Concept</div>
+            <div class="tr-meta">Chapter: Calculus · NCERT Ex. 7.6 · AI Whiteboard available ✨</div>
+          </div>
+          <div class="tr-right">
+            <div class="tr-dur"><span class="dur-icon">⏱</span>50 min</div>
+            <div class="tr-doubt-btn" onclick="event.stopPropagation();showToast('🎤 Doubt solver open ho raha hai!')">🎤 Doubt Poochho</div>
+          </div>
+        </div>
+
+        <!-- Task 3 -->
+        <div class="task-row" onclick="toggleTask(this)">
+          <div class="tr-check todo"></div>
+          <div class="tr-body">
+            <div class="tr-top">
+              <div class="tr-subj-tag tag-che">Chemistry</div>
+              <div class="tr-type type-learn">Learn</div>
+            </div>
+            <div class="tr-topic">SN1 vs SN2 Reactions — Mechanism & Examples</div>
+            <div class="tr-meta">Chapter: Organic Chemistry · Focus on substrate & solvent effect</div>
+          </div>
+          <div class="tr-right">
+            <div class="tr-dur"><span class="dur-icon">⏱</span>40 min</div>
+            <div class="tr-doubt-btn" onclick="event.stopPropagation();showToast('🎤 Doubt solver open ho raha hai!')">🎤 Doubt Poochho</div>
+          </div>
+        </div>
+
+        <!-- Task 4 -->
+        <div class="task-row" onclick="toggleTask(this)">
+          <div class="tr-check todo"></div>
+          <div class="tr-body">
+            <div class="tr-top">
+              <div class="tr-subj-tag" style="background:rgba(220,38,38,0.1);color:#DC2626;">Mixed</div>
+              <div class="tr-type type-practice">Practice</div>
+            </div>
+            <div class="tr-topic">25 MCQs — Physics + Maths Mixed</div>
+            <div class="tr-meta">Previous Year JEE Questions · AI will analyse your errors after</div>
+          </div>
+          <div class="tr-right">
+            <div class="tr-dur"><span class="dur-icon">⏱</span>30 min</div>
+          </div>
+        </div>
+
+        <!-- Add task -->
+        <div class="add-task-row" onclick="showToast('Add custom task — coming soon!')">
+          <span>＋</span> Custom task add karo
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="right-col">
+
+      <!-- Streak -->
+      <div class="streak-card">
+        <div class="streak-num">12</div>
+        <div class="streak-info">
+          <div class="t">🔥 Din Ka Streak!</div>
+          <div class="s">Kal bhi padho — 13 din ka badge milega</div>
+        </div>
+        <div class="streak-em">🏆</div>
+      </div>
+
+      <!-- This week stats -->
+      <div class="mini-stats">
+        <div class="ms-title">Is Hafte Ka Report</div>
+        <div class="ms-row">
+          <div class="ms-icon ic-o" style="background:rgba(255,107,0,0.1);">⏱</div>
+          <div class="ms-info">
+            <div class="ms-label">Total study time</div>
+            <div class="ms-val">11.5 / 28 hrs</div>
+          </div>
+        </div>
+        <div class="ms-row">
+          <div class="ms-icon" style="background:rgba(57,73,171,0.1);">✅</div>
+          <div class="ms-info">
+            <div class="ms-label">Tasks completed</div>
+            <div class="ms-val">7 / 24 tasks</div>
+          </div>
+        </div>
+        <div class="ms-row">
+          <div class="ms-icon" style="background:rgba(27,138,78,0.1);">🎤</div>
+          <div class="ms-info">
+            <div class="ms-label">Doubts solved</div>
+            <div class="ms-val">14 this week</div>
+          </div>
+        </div>
+        <div class="ms-row" style="margin-bottom:0;">
+          <div class="ms-icon" style="background:rgba(220,38,38,0.1);">📄</div>
+          <div class="ms-info">
+            <div class="ms-label">Mock test score</div>
+            <div class="ms-val">142 / 300 ↑ 12pts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weakness map -->
+      <div class="weakness-card">
+        <div class="wc-head">
+          <div class="wc-title">Concept Weakness Map</div>
+          <div class="wc-link">Full Map →</div>
+        </div>
+        <div class="wc-body">
+          <div class="wi">
+            <div class="wi-top2"><div class="wi-concept">Impulse & Momentum</div><div class="wi-score ws-weak">Weak 78%</div></div>
+            <div class="wbar2"><div class="wfill2 wf-r" style="width:78%"></div></div>
+          </div>
+          <div class="wi">
+            <div class="wi-top2"><div class="wi-concept">Integration (Calculus)</div><div class="wi-score ws-weak">Weak 71%</div></div>
+            <div class="wbar2"><div class="wfill2 wf-r" style="width:71%"></div></div>
+          </div>
+          <div class="wi">
+            <div class="wi-top2"><div class="wi-concept">Organic Reactions</div><div class="wi-score ws-med">Medium 54%</div></div>
+            <div class="wbar2"><div class="wfill2 wf-y" style="width:54%"></div></div>
+          </div>
+          <div class="wi">
+            <div class="wi-top2"><div class="wi-concept">Kinematics</div><div class="wi-score ws-str">Strong 18%</div></div>
+            <div class="wbar2"><div class="wfill2 wf-g" style="width:18%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WhatsApp preview -->
+      <div class="wa-card">
+        <div class="wac-title">📱 Kal Ka WhatsApp Reminder</div>
+        <div class="wac-sub">Subah 7 baje tumhare number pe yeh message aayega:</div>
+        <div class="wac-preview">
+          <div class="sender">🎓 VidyaAI</div>
+          Namaste Rahul! 🌅<br>
+          <strong>Aaj ka plan — Wed, 16 July:</strong><br>
+          📐 Maths: Differential Equations (60 min)<br>
+          ⚛️ Physics: Optics Revision (45 min)<br>
+          🧪 Chemistry: Electrochemistry (40 min)<br><br>
+          JEE mein <strong>184 din bacha hai</strong> — aaj bhi full focus! 💪<br>
+          <span style="color:rgba(22,101,52,0.6);font-size:10px;">Reply 'SKIP' to reschedule</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /main-wrap -->
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span>✅</span>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script>
+// ── Setup toggle ──
+function toggleSetup() {
+  const body = document.getElementById('setupBody');
+  const toggle = document.getElementById('setupToggle');
+  body.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+
+// ── Exam card selection ──
+function selExam(el, name) {
+  document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('cdTarget').textContent = name + ' 2026';
+}
+
+// ── Subject card toggle ──
+function toggleSubj(el, cls) {
+  const isOn = el.classList.contains(cls);
+  el.classList.toggle(cls);
+  const chk = el.querySelector('.subj-check');
+  const lbl = el.querySelector('.subj-priority-label');
+  if (!isOn) {
+    chk.textContent = '✓';
+    lbl.textContent = 'Weakness: Medium';
+  } else {
+    chk.textContent = '';
+    lbl.textContent = 'Not selected';
+  }
+}
+
+// ── Priority dots ──
+function setPriority(e, dot, idx) {
+  e.stopPropagation();
+  const dots = dot.parentElement.querySelectorAll('.sp-dot');
+  dots.forEach((d, i) => d.classList.toggle('active', i <= idx));
+  const lbl = dot.parentElement.nextElementSibling;
+  const labels = ['Weakness: None', 'Weakness: Low', 'Weakness: Medium', 'Weakness: High', 'Weakness: Very High'];
+  lbl.textContent = labels[idx];
+}
+
+// ── Day toggle ──
+function toggleDay(el) { el.classList.toggle('on'); }
+
+// ── Time preference ──
+function selTime(el) {
+  document.querySelectorAll('.tp-card').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ── Tab toggle ──
+function setTab(name, el) {
+  document.querySelectorAll('.vtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  if (name !== 'week') showToast('📅 ' + name.charAt(0).toUpperCase() + name.slice(1) + ' view — coming soon!');
+}
+
+// ── WhatsApp toggle ──
+function toggleWA() {
+  const t = document.getElementById('waToggle');
+  t.classList.toggle('off');
+}
+
+// ── Generate plan ──
+function generatePlan() {
+  const btn = document.querySelector('.btn-generate');
+  btn.textContent = '⏳ Generating...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = '✅ Plan Ready!';
+    setTimeout(() => {
+      btn.textContent = '🤖 AI Plan Generate Karo';
+      btn.disabled = false;
+      toggleSetup();
+      showToast('🎯 AI ne tumhara personalized plan tayyar kar diya!');
+    }, 1000);
+  }, 2000);
+}
+
+// ── Task toggle ──
+function toggleTask(row) {
+  row.classList.toggle('completed');
+  const chk = row.querySelector('.tr-check');
+  if (row.classList.contains('completed')) {
+    chk.classList.remove('todo'); chk.classList.add('done'); chk.textContent = '✓';
+    showToast('✅ Task complete! Keep going 🔥');
+  } else {
+    chk.classList.remove('done'); chk.classList.add('todo'); chk.textContent = '';
+  }
+}
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toast').classList.add('show');
+  toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 3000);
+}
+
+// ── Countdown ──
+function updateCountdown() {
+  const d = new Date(document.getElementById('examDate').value);
+  const now = new Date();
+  const diff = Math.max(0, Math.ceil((d - now) / 86400000));
+  document.getElementById('cdDays').textContent = diff;
+}
+updateCountdown();
+</script>
+</body>
+</html>

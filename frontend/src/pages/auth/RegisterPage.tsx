@@ -22,7 +22,7 @@ export function RegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      navigate('/auth/onboard', { replace: true });
+      navigate('/home', { replace: true });
     } finally {
       setLoading(false);
     }

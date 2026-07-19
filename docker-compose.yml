@@ -73,6 +73,17 @@ services:
       "
     restart: "no"
 
+  # ── Adminer (PostgreSQL web UI) ────────────────────────────────────────────
+  adminer:
+    image: adminer:latest
+    container_name: vidyaai-adminer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
   # ── VidyaAI Backend ─────────────────────────────────────────────────────────
   backend:
     build:

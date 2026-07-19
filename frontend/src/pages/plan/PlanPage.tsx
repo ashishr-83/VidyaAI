@@ -11,6 +11,7 @@ import StreakCard from '../../components/plan/StreakCard';
 import MiniStats from '../../components/plan/MiniStats';
 import WeaknessMap from '../../components/plan/WeaknessMap';
 import WhatsAppPreview from '../../components/plan/WhatsAppPreview';
+import { ChapterPicker } from '../../components/plan/ChapterPicker';
 
 const DEFAULT_STATS = {
   totalStudiedMinutes: 0,
@@ -30,6 +31,7 @@ export function PlanPage() {
 
   const [activeTab, setActiveTab] = useState<TabId>('week');
   const [setupOpen, setSetupOpen] = useState(false);
+  const [chapterPickerOpen, setChapterPickerOpen] = useState(false);
 
   const tabs: { id: TabId; label: string }[] = [
     { id: 'week', label: t.tabWeek },
@@ -121,7 +123,23 @@ export function PlanPage() {
           </button>
 
           <button
-            onClick={regenerate}
+            onClick={() => setChapterPickerOpen((o) => !o)}
+            style={{
+              padding: '8px 16px',
+              border: '1.5px solid #FF6B00',
+              borderRadius: '10px',
+              background: chapterPickerOpen ? '#FFF7F0' : '#fff',
+              color: '#FF6B00',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            📚 NCERT Chapters
+          </button>
+
+          <button
+            onClick={() => void regenerate()}
             disabled={regenerating}
             style={{
               padding: '8px 16px',
@@ -143,10 +161,22 @@ export function PlanPage() {
       {/* Setup card — visible when open or no plan yet */}
       {(setupOpen || (!plan && !loading)) && (
         <SetupCard
-          onGenerate={regenerate}
+          onGenerate={() => void regenerate()}
           generating={regenerating}
           lang={language}
           onPlanReady={() => setSetupOpen(false)}
+        />
+      )}
+
+      {/* NCERT Chapter picker — self-contained, fetches its own catalog */}
+      {chapterPickerOpen && (
+        <ChapterPicker
+          language={language}
+          onGenerate={({ chapterIds, dailyMinutes, language: lang, subject, classLevel: _cls }) => {
+            void regenerate(chapterIds, dailyMinutes, lang, subject);
+            setChapterPickerOpen(false);
+          }}
+          generating={regenerating}
         />
       )}
 

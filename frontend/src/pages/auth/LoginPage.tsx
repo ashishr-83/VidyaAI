@@ -36,7 +36,7 @@ export function LoginPage() {
     setEmailLoading(true);
     try {
       const { isOnboarded } = await emailLogin(email, password);
-      navigate(isOnboarded ? '/home' : '/auth/onboard', { replace: true });
+      navigate('/home', { replace: true });
     } finally {
       setEmailLoading(false);
     }
@@ -61,7 +61,7 @@ export function LoginPage() {
     setPhoneLoading(true);
     try {
       const { isOnboarded } = await verifyOtp(phone, otp);
-      navigate(isOnboarded ? '/home' : '/auth/onboard', { replace: true });
+      navigate('/home', { replace: true });
     } catch {
       // toast shown by verifyOtp
     } finally {
