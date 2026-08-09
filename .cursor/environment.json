@@ -1,0 +1,26 @@
+{
+  "name": "VidyaAI Development",
+  "user": "node",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "terminals": [
+    {
+      "name": "backend",
+      "command": "cd backend && set -a && source .env && set +a && npm run dev"
+    },
+    {
+      "name": "frontend",
+      "command": "cd frontend && set -a && source .env && set +a && npm run dev -- --host 0.0.0.0"
+    }
+  ],
+  "ports": [
+    { "name": "Backend API", "port": 3000 },
+    { "name": "Frontend", "port": 5173 },
+    { "name": "Adminer", "port": 8080 },
+    { "name": "MinIO Console", "port": 9001 }
+  ]
+}
