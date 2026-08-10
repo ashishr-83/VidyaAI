@@ -6,6 +6,8 @@ export const TaskItemSchema = z.object({
   duration: z.number(),
   type: z.enum(['learn', 'revise', 'practice', 'test']),
   done: z.boolean().default(false),
+  isWeakArea: z.boolean().optional().default(false),
+  reason: z.string().optional(), // "Weak area priority" | "New chapter" | "Spaced revision" | "Practice"
 });
 
 export const DayPlanSchema = z.object({
@@ -48,6 +50,16 @@ export const WeekPlanSchema = z.object({
 export type TaskItem = z.infer<typeof TaskItemSchema>;
 export type DayPlan = z.infer<typeof DayPlanSchema>;
 export type WeekPlan = z.infer<typeof WeekPlanSchema>;
+
+// ── Multi-subject chapter selection (ChapterPicker → regenerate) ──────────────
+
+export const SubjectChapterSelectionSchema = z.object({
+  subject: z.string(),
+  chapterIds: z.array(z.string()),
+  weakChapterIds: z.array(z.string()),
+});
+
+export type SubjectChapterSelection = z.infer<typeof SubjectChapterSelectionSchema>;
 
 // ── NCERT Chapter types ───────────────────────────────────────────────────────
 

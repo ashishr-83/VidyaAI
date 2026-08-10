@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VidyaAI — Complete Profile &amp; Study Plan Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0E1636;
+    --navy-2:#161f45;
+    --bg:#EEF1F9;
+    --card:#FFFFFF;
+    --orange:#F5821F;
+    --orange-2:#FFA85C;
+    --ink:#151B33;
+    --muted:#727990;
+    --line:#E4E8F3;
+    --physics:#5B57E0;
+    --physics-bg:#EEEDFC;
+    --maths:#D9720F;
+    --maths-bg:#FCEEE0;
+    --chem:#1E9463;
+    --chem-bg:#E6F5EE;
+    --mixed:#B45309;
+    --mixed-bg:#FDF3E3;
+    --green:#1E9463;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    display:flex;
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{font-family:'Sora',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* SIDEBAR */
+  .sidebar{
+    width:250px;
+    background:var(--navy);
+    color:#cfd3e6;
+    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
+    padding:22px 16px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:1.15rem;margin-bottom:32px;padding:0 6px;}
+  .brand .cap{width:34px;height:34px;background:var(--orange);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+  .brand span span{color:var(--orange);}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:.92rem;font-weight:500;color:#aeb4cc;margin-bottom:4px;cursor:pointer;}
+  .nav-item.active{background:rgba(245,130,31,0.16);color:#fff;border:1px solid rgba(245,130,31,.4);}
+  .nav-item .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.0;}
+  .sidebar-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 8px;border-top:1px solid rgba(255,255,255,.08);}
+  .avatar{width:32px;height:32px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.85rem;}
+  .sidebar-foot .name{font-size:.85rem;color:#fff;font-weight:600;}
+  .sidebar-foot .plan{font-size:.72rem;color:#8b91ac;}
+
+  /* MAIN */
+  .main{flex:1;padding:32px 40px;max-width:1300px;}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;flex-wrap:wrap;gap:16px;}
+  .page-title{display:flex;align-items:center;gap:10px;}
+  .page-title .icon{width:38px;height:38px;border-radius:10px;background:var(--orange-bg,#FFE8D2);display:flex;align-items:center;justify-content:center;}
+  .page-title h1{font-size:1.5rem;margin:0;}
+  .page-sub{color:var(--muted);font-size:.88rem;margin:4px 0 0;}
+
+  /* STEPPER */
+  .stepper{display:flex;gap:8px;background:var(--card);padding:6px;border-radius:12px;border:1px solid var(--line);}
+  .step-btn{padding:9px 16px;border-radius:9px;font-size:.85rem;font-weight:600;border:none;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s;}
+  .step-btn .num{width:18px;height:18px;border-radius:50%;background:var(--line);color:var(--muted);font-size:.68rem;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .step-btn.active{background:var(--navy);color:#fff;}
+  .step-btn.active .num{background:var(--orange);color:#fff;}
+  .step-btn.done .num{background:var(--green);color:#fff;}
+
+  .screen{display:none;animation:fade .25s ease;}
+  .screen.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--line);padding:26px 28px;}
+
+  /* FORM */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;margin-top:18px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field.full{grid-column:1/-1;}
+  .field label{font-size:.8rem;font-weight:600;color:var(--ink);}
+  .field .hint{font-size:.72rem;color:var(--muted);font-weight:400;}
+  .field select,.field input{
+    padding:11px 12px;border-radius:9px;border:1.5px solid var(--line);
+    font-family:'Inter';font-size:.88rem;color:var(--ink);background:#fbfcfe;
+  }
+  .field select:focus,.field input:focus{outline:none;border-color:var(--orange);background:#fff;}
+  .section-label{display:flex;align-items:center;gap:10px;margin:28px 0 4px;font-size:.78rem;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;}
+  .section-label::after{content:"";flex:1;height:1px;background:var(--line);}
+  .chip-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);font-size:.83rem;font-weight:600;color:var(--muted);cursor:pointer;background:#fbfcfe;}
+  .chip.sel{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .optional-box{border:1.5px dashed var(--line);border-radius:12px;padding:16px 18px;margin-top:26px;}
+  .optional-box summary{font-size:.85rem;font-weight:700;cursor:pointer;color:var(--navy);}
+  .optional-box[open] summary{margin-bottom:14px;}
+  .form-actions{display:flex;justify-content:flex-end;margin-top:30px;}
+  .btn{padding:12px 26px;border-radius:10px;font-weight:700;font-size:.9rem;border:none;cursor:pointer;}
+  .btn-primary{background:var(--orange);color:#fff;}
+  .btn-primary:hover{background:#e0731a;}
+
+  /* SUBJECT/CHAPTER PICKER */
+  .subj-tabs{display:flex;gap:10px;margin:18px 0 20px;flex-wrap:wrap;}
+  .subj-tab{padding:10px 18px;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer;border:1.5px solid var(--line);display:flex;align-items:center;gap:8px;color:var(--muted);background:#fbfcfe;}
+  .subj-tab .count{background:var(--line);color:var(--ink);font-size:.68rem;padding:1px 7px;border-radius:999px;}
+  .subj-tab.active{border-color:var(--tab-color);color:var(--tab-color);background:var(--tab-bg);}
+  .subj-tab.active .count{background:var(--tab-color);color:#fff;}
+
+  .unit{margin-bottom:22px;}
+  .unit-title{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:10px;}
+  .chapter-row{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--line);margin-bottom:8px;background:#fbfcfe;}
+  .chapter-row:hover{border-color:#d7dcee;}
+  .chapter-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--navy);cursor:pointer;}
+  .chapter-name{flex:1;font-size:.87rem;font-weight:500;}
+  .chapter-time{font-size:.75rem;color:var(--muted);}
+  .weak-toggle{display:flex;align-items:center;gap:6px;font-size:.74rem;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:999px;border:1.5px solid var(--line);cursor:pointer;}
+  .weak-toggle.on{background:#FDEDEE;border-color:#F3B7BD;color:#C0303F;}
+  .weak-toggle .flame{opacity:.4;}
+  .weak-toggle.on .flame{opacity:1;}
+
+  .sticky-bar{position:sticky;bottom:0;background:var(--navy);color:#fff;border-radius:14px;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;margin-top:24px;box-shadow:0 -6px 24px rgba(0,0,0,.12);}
+  .sticky-bar .count-text b{color:var(--orange);}
+  .sticky-bar .count-text{font-size:.88rem;color:#cfd3e6;}
+
+  /* WEEKLY PLAN */
+  .banner{background:linear-gradient(120deg,var(--navy),#1a2352);border-radius:16px;padding:22px 28px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;margin-bottom:24px;}
+  .banner .exam{font-size:.78rem;color:#9aa0c2;}
+  .banner .exam b{display:block;font-size:1.1rem;color:#fff;margin-top:2px;}
+  .banner .progress-wrap{min-width:220px;}
+  .progress-track{height:8px;background:rgba(255,255,255,.15);border-radius:99px;margin-top:8px;}
+  .progress-fill{height:8px;background:var(--orange);border-radius:99px;}
+
+  .week-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;}
+  .day-card{border:1.5px solid var(--line);border-radius:14px;padding:14px;background:#fbfcfe;min-height:250px;display:flex;flex-direction:column;}
+  .day-card.today{border-color:var(--orange);box-shadow:0 0 0 3px rgba(245,130,31,.12);}
+  .day-name{font-size:.68rem;font-weight:700;color:var(--muted);text-align:center;letter-spacing:.05em;}
+  .day-num{font-size:1.2rem;font-weight:800;text-align:center;margin:2px 0 8px;}
+  .today-pill{background:var(--orange);color:#fff;font-size:.62rem;font-weight:700;padding:2px 10px;border-radius:999px;margin:0 auto 10px;display:block;width:fit-content;}
+  .task{border-radius:9px;padding:8px 10px;margin-bottom:7px;}
+  .task .subj-tag{font-size:.62rem;font-weight:800;letter-spacing:.04em;}
+  .task .ch-name{font-size:.76rem;font-weight:600;margin:2px 0;}
+  .task .meta{display:flex;justify-content:space-between;font-size:.65rem;color:var(--muted);}
+  .task .reason{display:inline-block;margin-top:4px;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:999px;}
+  .task.physics{background:var(--physics-bg);} .task.physics .subj-tag{color:var(--physics);} .task.physics .reason{background:#dedafc;color:var(--physics);}
+  .task.maths{background:var(--maths-bg);} .task.maths .subj-tag{color:var(--maths);} .task.maths .reason{background:#f8dfc0;color:var(--maths);}
+  .task.chem{background:var(--chem-bg);} .task.chem .subj-tag{color:var(--chem);} .task.chem .reason{background:#cdeee0;color:var(--chem);}
+  .task.mixed{background:var(--mixed-bg);} .task.mixed .subj-tag{color:var(--mixed);} .task.mixed .reason{background:#f6e3bd;color:var(--mixed);}
+  .day-foot{margin-top:auto;padding-top:8px;display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);border-top:1px dashed var(--line);}
+  .rest{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--muted);text-align:center;font-size:.78rem;}
+  .rest .em{font-size:1.6rem;margin-bottom:6px;}
+
+  .locked-banner{display:flex;align-items:center;gap:12px;background:#F3F5FC;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:22px;}
+  .locked-banner .lock-icon{width:34px;height:34px;border-radius:9px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+  .locked-banner b{display:block;font-size:.85rem;}
+  .locked-banner span{font-size:.78rem;color:var(--muted);}
+  .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 24px;margin-top:20px;}
+  .info-item{border:1px solid var(--line);border-radius:11px;padding:13px 15px;background:#fbfcfe;}
+  .info-item .lbl{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+  .info-item .val{font-size:.92rem;font-weight:600;color:var(--ink);}
+  .pdf-link{display:flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;color:var(--navy);text-decoration:none;padding:5px 9px;border-radius:7px;border:1px solid var(--line);background:#fff;white-space:nowrap;}
+  .pdf-link:hover{border-color:var(--navy);}
+  .browse-toggle{display:flex;align-items:center;gap:10px;margin:4px 0 16px;}
+  .browse-toggle .chip{padding:7px 14px;font-size:.78rem;}
+
+  .legend{display:flex;gap:16px;margin-top:18px;flex-wrap:wrap;}
+
+  /* GENERATING OVERLAY */
+  .gen-overlay{position:fixed;inset:0;background:rgba(14,22,54,.88);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:50;}
+  .gen-overlay.show{display:flex;}
+  .gen-box{background:#fff;border-radius:18px;padding:36px 42px;width:380px;text-align:center;}
+  .gen-spinner{width:46px;height:46px;border:4px solid var(--line);border-top-color:var(--orange);border-radius:50%;margin:0 auto 18px;animation:spin 0.9s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .gen-box h3{margin:0 0 6px;font-size:1.05rem;}
+  .gen-box p{margin:0 0 20px;font-size:.8rem;color:var(--muted);}
+  .gen-steps{text-align:left;display:flex;flex-direction:column;gap:10px;}
+  .gen-step{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted);opacity:.4;transition:.25s;}
+  .gen-step.active{opacity:1;color:var(--ink);font-weight:600;}
+  .gen-step.done{opacity:1;color:var(--green);}
+  .gen-step .mark{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;}
+  .gen-step.active .mark{border-color:var(--orange);}
+  .gen-step.done .mark{border-color:var(--green);background:var(--green);color:#fff;}
+
+  /* DAY DETAIL MODAL */
+  .day-card{cursor:pointer;}
+  .day-modal-overlay{position:fixed;inset:0;background:rgba(14,22,54,.55);display:none;align-items:center;justify-content:center;z-index:60;}
+  .day-modal-overlay.show{display:flex;}
+  .day-modal{background:#fff;border-radius:18px;padding:26px 28px;width:460px;max-height:80vh;overflow-y:auto;}
+  .day-modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+  .day-modal-head h3{margin:0;font-size:1.1rem;}
+  .day-modal-head span{font-size:.78rem;color:var(--muted);}
+  .modal-close{background:var(--bg);border:none;width:30px;height:30px;border-radius:50%;font-size:.9rem;cursor:pointer;color:var(--muted);}
+  .dtask{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);}
+  .dtask:last-child{border-bottom:none;}
+  .dtask input[type=checkbox]{width:19px;height:19px;margin-top:2px;accent-color:var(--green);cursor:pointer;}
+  .dtask.checked .dname{text-decoration:line-through;color:var(--muted);}
+  .dtask-body{flex:1;}
+  .dtag{font-size:.62rem;font-weight:800;letter-spacing:.04em;}
+  .dname{font-size:.9rem;font-weight:600;margin:2px 0 4px;}
+  .dmeta{display:flex;gap:10px;align-items:center;font-size:.72rem;color:var(--muted);}
+  .dreason{font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:999px;}
+  .dtask.physics .dtag{color:var(--physics);} .dtask.physics .dreason{background:var(--physics-bg);color:var(--physics);}
+  .dtask.maths .dtag{color:var(--maths);} .dtask.maths .dreason{background:var(--maths-bg);color:var(--maths);}
+  .dtask.chem .dtag{color:var(--chem);} .dtask.chem .dreason{background:var(--chem-bg);color:var(--chem);}
+  .dtask.mixed .dtag{color:var(--mixed);} .dtask.mixed .dreason{background:var(--mixed-bg);color:var(--mixed);}
+  .dtask-actions{display:flex;gap:8px;margin-top:8px;}
+  .start-btn{background:var(--navy);color:#fff;border:none;padding:6px 13px;border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;}
+
+  /* LESSON SCREEN */
+  .lesson-back{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;margin-bottom:16px;}
+  .lesson-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap;gap:10px;}
+  .lesson-crumb{font-size:.75rem;color:var(--muted);margin-bottom:4px;}
+  .lesson-head h2{margin:0;font-size:1.3rem;}
+  .lesson-badge{background:var(--physics-bg);color:var(--physics);font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:999px;white-space:nowrap;}
+  .lesson-progress{display:flex;gap:5px;margin:14px 0 24px;}
+  .lesson-progress .seg{flex:1;height:5px;border-radius:99px;background:var(--line);}
+  .lesson-progress .seg.on{background:var(--orange);}
+  .lesson-section{margin-bottom:26px;}
+  .lesson-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 10px;display:flex;align-items:center;gap:8px;}
+  .lesson-body p{font-size:.92rem;line-height:1.65;color:var(--ink);margin:0 0 10px;}
+  .formula-box{background:var(--navy);color:#fff;border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .formula-box .f{font-family:'IBM Plex Mono';font-size:1.5rem;font-weight:600;color:var(--orange-2);}
+  .formula-box .fdesc{font-size:.78rem;color:#cfd3e6;line-height:1.6;}
+  .example-box{border:1.5px solid var(--line);border-radius:12px;padding:16px 18px;background:#fbfcfe;}
+  .example-box .step{display:flex;gap:10px;font-size:.86rem;margin-bottom:8px;line-height:1.5;}
+  .example-box .step b{color:var(--navy);flex-shrink:0;}
+  .practice-item{border:1.5px solid var(--line);border-radius:10px;padding:12px 15px;margin-bottom:10px;background:#fbfcfe;}
+  .practice-item .q{font-size:.87rem;font-weight:600;margin-bottom:8px;}
+  .reveal-btn{font-size:.74rem;font-weight:700;color:var(--navy);background:none;border:1.5px solid var(--line);padding:5px 11px;border-radius:7px;cursor:pointer;}
+  .reveal-ans{display:none;margin-top:8px;font-size:.84rem;color:var(--green);font-weight:600;padding-top:8px;border-top:1px dashed var(--line);}
+  .reveal-ans.show{display:block;}
+  .quiz-q{border:1.5px solid var(--line);border-radius:12px;padding:15px 17px;margin-bottom:12px;}
+  .quiz-q .q{font-size:.88rem;font-weight:600;margin-bottom:10px;}
+  .quiz-opt{display:block;width:100%;text-align:left;padding:9px 13px;border-radius:8px;border:1.5px solid var(--line);background:#fbfcfe;font-size:.83rem;margin-bottom:7px;cursor:pointer;font-family:'Inter';}
+  .quiz-opt.correct{background:#E6F5EE;border-color:var(--green);color:var(--green);font-weight:700;}
+  .quiz-opt.wrong{background:#FDEDEE;border-color:#e0919b;color:#C0303F;font-weight:700;}
+  .quiz-result{display:none;background:var(--navy);color:#fff;border-radius:12px;padding:18px 22px;margin-top:6px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .quiz-result.show{display:flex;}
+  .quiz-result .score{font-family:'IBM Plex Mono';font-size:1.6rem;font-weight:700;color:var(--orange);}
+  .quiz-result .msg{font-size:.8rem;color:#cfd3e6;max-width:280px;}
+  .lesson-footer{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--line);}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:.74rem;color:var(--muted);}
+  .legend-dot{width:9px;height:9px;border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><div class="cap">🎓</div><span>Vidya<span>AI</span></span></div>
+  <div class="nav-item">Dashboard</div>
+  <div class="nav-item">Doubt Solver</div>
+  <div class="nav-item active">Study Plan</div>
+  <div class="nav-item">Profile</div>
+  <div class="sidebar-foot">
+    <div class="avatar">A</div>
+    <div>
+      <div class="name">Ashish Raghuvanshi</div>
+      <div class="plan">Free plan</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">
+      <div class="icon">📋</div>
+      <div>
+        <h1>Set up your study plan</h1>
+        <p class="page-sub">Three quick steps — your plan updates itself as you go</p>
+      </div>
+    </div>
+    <div class="stepper">
+      <button class="step-btn active" data-step="1" onclick="goStep(1)"><span class="num">1</span> Subjects &amp; chapters</button>
+      <button class="step-btn" data-step="2" onclick="goStep(2)"><span class="num">2</span> Weekly plan</button>
+    </div>
+  </div>
+
+  <!-- STEP 1: SUBJECTS & CHAPTERS -->
+  <div class="screen active" id="screen-1">
+    <div class="card">
+      <h2 style="margin:0;font-size:1.15rem;">Choose subjects and chapters</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin:4px 0 0;">Pick chapters across as many subjects as you like from the NCERT library — mark the ones you find tough.</p>
+
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-top:18px;">
+        <div class="field">
+          <label>Hours you can study each day this week</label>
+          <select><option>Under 1 hour</option><option selected>1–2 hours</option><option>2–3 hours</option><option>3–4 hours</option><option>4+ hours</option></select>
+          <span class="hint">Defaults from your profile — adjust anytime, it only affects this week's plan.</span>
+        </div>
+        <div class="field">
+          <label>Chapter library</label>
+          <div class="chip-row">
+            <div class="chip sel" onclick="setLibrary(this)">Grade 10 · CBSE (mine)</div>
+            <div class="chip" onclick="setLibrary(this)">Browse full NCERT library</div>
+          </div>
+          <span class="hint">Switch to browse ahead or revise chapters outside your grade.</span>
+        </div>
+      </div>
+
+      <div class="subj-tabs" style="margin-top:22px;">
+        <div class="subj-tab active" style="--tab-color:var(--physics);--tab-bg:var(--physics-bg);" onclick="showSubj(this,'physics')">Physics <span class="count">2</span></div>
+        <div class="subj-tab" style="--tab-color:var(--maths);--tab-bg:var(--maths-bg);" onclick="showSubj(this,'maths')">Maths <span class="count">2</span></div>
+        <div class="subj-tab" style="--tab-color:var(--chem);--tab-bg:var(--chem-bg);" onclick="showSubj(this,'chem')">Chemistry <span class="count">1</span></div>
+        <div class="subj-tab" style="--tab-color:#0F766E;--tab-bg:#E3F5F3;" onclick="showSubj(this,'sci')">Social Science <span class="count">0</span></div>
+      </div>
+
+      <div id="subj-physics">
+        <div class="unit">
+          <div class="unit-title">Unit 1 — Motion, Force &amp; Energy</div>
+          <label class="chapter-row"><input type="checkbox" checked><span class="chapter-name">Newton's Laws of Motion</span><span class="chapter-time">45 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox" checked><span class="chapter-name">Work, Energy and Power</span><span class="chapter-time">50 min</span><span class="weak-toggle on" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox"><span class="chapter-name">Impulse &amp; Momentum</span><span class="chapter-time">45 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox"><span class="chapter-name">Gravitation</span><span class="chapter-time">40 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+        </div>
+      </div>
+
+      <div id="subj-maths" style="display:none;">
+        <div class="unit">
+          <div class="unit-title">Unit 1 — Algebra &amp; Calculus Basics</div>
+          <label class="chapter-row"><input type="checkbox" checked><span class="chapter-name">Differentiation</span><span class="chapter-time">50 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox" checked><span class="chapter-name">Integration by Parts</span><span class="chapter-time">55 min</span><span class="weak-toggle on" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox"><span class="chapter-name">Definite Integrals</span><span class="chapter-time">45 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox"><span class="chapter-name">Coordinate Geometry</span><span class="chapter-time">45 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+        </div>
+      </div>
+
+      <div id="subj-chem" style="display:none;">
+        <div class="unit">
+          <div class="unit-title">Unit 2 — Organic Reactions</div>
+          <label class="chapter-row"><input type="checkbox" checked><span class="chapter-name">SN1 vs SN2 Reactions</span><span class="chapter-time">40 min</span><span class="weak-toggle on" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox"><span class="chapter-name">Electrochemistry</span><span class="chapter-time">40 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+          <label class="chapter-row"><input type="checkbox"><span class="chapter-name">Periodic Table Trends</span><span class="chapter-time">40 min</span><span class="weak-toggle" onclick="toggleWeak(this,event)"><span class="flame">🔥</span> Weak area</span><a class="pdf-link" href="#" onclick="return false;">📄 PDF</a></label>
+        </div>
+      </div>
+
+      <div id="subj-sci" style="display:none;">
+        <p style="color:var(--muted);font-size:.85rem;">No chapters selected yet in Social Science.</p>
+      </div>
+
+      <div class="sticky-bar">
+        <div class="count-text"><b>5 chapters</b> selected across <b>3 subjects</b> · 2 marked as weak areas</div>
+        <button class="btn btn-primary" onclick="startGenerate()">Generate my weekly plan →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: WEEKLY PLAN -->
+  <div class="screen" id="screen-2">
+    <div class="banner">
+      <div class="exam">Study focus<b>Grade 10 · CBSE · Daily plan</b></div>
+      <div class="progress-wrap">
+        <div style="display:flex;justify-content:space-between;font-size:.78rem;color:#cfd3e6;"><span>Syllabus progress</span><b style="color:var(--orange);">18%</b></div>
+        <div class="progress-track"><div class="progress-fill" style="width:18%;"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="week-header">
+        <h2 style="margin:0;font-size:1.1rem;">This week's AI-generated plan</h2>
+        <span style="font-size:.78rem;color:var(--muted);">Built from 5 chapters you selected · rebalances every Sunday night</span>
+      </div>
+
+      <div class="week-grid">
+        <div class="day-card today" onclick="openDay('mon')">
+          <div class="day-name">MON</div><div class="day-num">3</div>
+          <span class="today-pill">Today</span>
+          <div class="task maths"><div class="subj-tag">MATHS</div><div class="ch-name">Integration by Parts</div><div class="meta"><span>50 min</span></div><span class="reason">Weak area priority</span></div>
+          <div class="task physics"><div class="subj-tag">PHYSICS</div><div class="ch-name">Work, Energy and Power</div><div class="meta"><span>50 min</span></div><span class="reason">Weak area priority</span></div>
+          <div class="task chem"><div class="subj-tag">CHEMISTRY</div><div class="ch-name">SN1 vs SN2 Reactions</div><div class="meta"><span>40 min</span></div><span class="reason">Weak area priority</span></div>
+          <div class="day-foot"><span>2h 20m</span><span>0/3 done</span></div>
+        </div>
+
+        <div class="day-card" onclick="openDay('tue')">
+          <div class="day-name">TUE</div><div class="day-num">4</div><div style="height:22px;"></div>
+          <div class="task physics"><div class="subj-tag">PHYSICS</div><div class="ch-name">Newton's Laws of Motion</div><div class="meta"><span>45 min</span></div><span class="reason">New chapter</span></div>
+          <div class="task maths"><div class="subj-tag">MATHS</div><div class="ch-name">Differentiation</div><div class="meta"><span>50 min</span></div><span class="reason">New chapter</span></div>
+          <div class="task mixed"><div class="subj-tag">MIXED</div><div class="ch-name">15 MCQs · Physics + Maths</div><div class="meta"><span>25 min</span></div><span class="reason">Practice</span></div>
+          <div class="day-foot"><span>2h 0m</span><span>Upcoming</span></div>
+        </div>
+
+        <div class="day-card" onclick="openDay('wed')">
+          <div class="day-name">WED</div><div class="day-num">5</div><div style="height:22px;"></div>
+          <div class="task chem"><div class="subj-tag">CHEMISTRY</div><div class="ch-name">Electrochemistry</div><div class="meta"><span>40 min</span></div><span class="reason">New chapter</span></div>
+          <div class="task maths"><div class="subj-tag">MATHS</div><div class="ch-name">Coordinate Geometry</div><div class="meta"><span>45 min</span></div><span class="reason">New chapter</span></div>
+          <div class="day-foot"><span>1h 25m</span><span>Upcoming</span></div>
+        </div>
+
+        <div class="day-card" onclick="openDay('thu')">
+          <div class="day-name">THU</div><div class="day-num">6</div><div style="height:22px;"></div>
+          <div class="task physics"><div class="subj-tag">PHYSICS</div><div class="ch-name">Impulse &amp; Momentum</div><div class="meta"><span>45 min</span></div><span class="reason">New chapter</span></div>
+          <div class="task mixed"><div class="subj-tag">MIXED</div><div class="ch-name">Revision · Work-Energy Theorem</div><div class="meta"><span>25 min</span></div><span class="reason">Spaced revision</span></div>
+          <div class="day-foot"><span>1h 10m</span><span>Upcoming</span></div>
+        </div>
+
+        <div class="day-card" onclick="openDay('fri')">
+          <div class="day-name">FRI</div><div class="day-num">7</div><div style="height:22px;"></div>
+          <div class="task chem"><div class="subj-tag">CHEMISTRY</div><div class="ch-name">Periodic Table Trends</div><div class="meta"><span>40 min</span></div><span class="reason">New chapter</span></div>
+          <div class="task mixed"><div class="subj-tag">MIXED</div><div class="ch-name">20 MCQs · Full week mix</div><div class="meta"><span>30 min</span></div><span class="reason">Practice</span></div>
+          <div class="day-foot"><span>1h 10m</span><span>Upcoming</span></div>
+        </div>
+
+        <div class="day-card" onclick="openDay('sat')">
+          <div class="day-name">SAT</div><div class="day-num">8</div><div style="height:22px;"></div>
+          <div class="task mixed"><div class="subj-tag">MIXED</div><div class="ch-name">Weekly revision — all 3 subjects</div><div class="meta"><span>60 min</span></div><span class="reason">Spaced revision</span></div>
+          <div class="day-foot"><span>1h 0m</span><span>Upcoming</span></div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-name">SUN</div><div class="day-num">9</div><div style="height:22px;"></div>
+          <div class="rest"><div class="em">🌙</div>Rest day<br>Revise only if you want to</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--physics);"></div>Physics</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--maths);"></div>Maths</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--chem);"></div>Chemistry</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--mixed);"></div>Mixed / Revision</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: AI-GENERATED LESSON -->
+  <div class="screen" id="screen-3">
+    <div class="lesson-back" onclick="closeLesson()">← Back to today's plan</div>
+    <div class="card">
+      <div class="lesson-head">
+        <div>
+          <div class="lesson-crumb">Physics · Unit 1 · Newton's Laws of Motion</div>
+          <h2>Newton's Second Law of Motion</h2>
+        </div>
+        <div class="lesson-badge">🔥 Weak area · ~18 min</div>
+      </div>
+      <div class="lesson-progress">
+        <div class="seg on"></div><div class="seg on"></div><div class="seg"></div><div class="seg"></div>
+      </div>
+
+      <div class="lesson-section">
+        <h4>📘 Concept, in plain terms</h4>
+        <div class="lesson-body">
+          <p>Newton's Second Law connects how hard you push something to how fast it speeds up. The heavier the object, the more force it takes to get the same acceleration — that's the whole idea. This is the law that explains why pushing an empty cart is easy and pushing a loaded one isn't, even with the same effort.</p>
+        </div>
+      </div>
+
+      <div class="lesson-section">
+        <h4>🧮 The formula</h4>
+        <div class="formula-box">
+          <div class="f">F = m × a</div>
+          <div class="fdesc">F = net force (newtons) &nbsp;·&nbsp; m = mass (kg) &nbsp;·&nbsp; a = acceleration (m/s²)<br>Double the force, double the acceleration — as long as mass stays the same.</div>
+        </div>
+      </div>
+
+      <div class="lesson-section">
+        <h4>✏️ Worked example</h4>
+        <div class="example-box">
+          <div class="step"><b>Q.</b> A 5 kg trolley is pushed with a force of 20 N. Find its acceleration.</div>
+          <div class="step"><b>1</b> Write the formula: F = m × a</div>
+          <div class="step"><b>2</b> Rearrange for a: a = F ÷ m</div>
+          <div class="step"><b>3</b> Substitute values: a = 20 ÷ 5</div>
+          <div class="step"><b>4</b> <b>a = 4 m/s²</b></div>
+        </div>
+      </div>
+
+      <div class="lesson-section">
+        <h4>🧠 Try it yourself</h4>
+        <div class="practice-item">
+          <div class="q">1. A 2 kg ball is hit with a force of 10 N. What's its acceleration?</div>
+          <button class="reveal-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+          <div class="reveal-ans">a = F ÷ m = 10 ÷ 2 = 5 m/s²</div>
+        </div>
+        <div class="practice-item">
+          <div class="q">2. What force is needed to accelerate a 10 kg mass at 3 m/s²?</div>
+          <button class="reveal-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show answer</button>
+          <div class="reveal-ans">F = m × a = 10 × 3 = 30 N</div>
+        </div>
+      </div>
+
+      <div class="lesson-section">
+        <h4>✅ Quick check — 3 questions</h4>
+        <div class="quiz-q">
+          <div class="q">1. If mass increases and force stays the same, acceleration:</div>
+          <button class="quiz-opt" onclick="answerQ(this,false)">Increases</button>
+          <button class="quiz-opt" onclick="answerQ(this,true)">Decreases</button>
+          <button class="quiz-opt" onclick="answerQ(this,false)">Stays the same</button>
+        </div>
+        <div class="quiz-q">
+          <div class="q">2. Units of force (F = m × a) are:</div>
+          <button class="quiz-opt" onclick="answerQ(this,true)">Newtons (N)</button>
+          <button class="quiz-opt" onclick="answerQ(this,false)">Joules (J)</button>
+          <button class="quiz-opt" onclick="answerQ(this,false)">Watts (W)</button>
+        </div>
+        <div class="quiz-q">
+          <div class="q">3. A 4 kg object accelerates at 2 m/s². The force acting on it is:</div>
+          <button class="quiz-opt" onclick="answerQ(this,false)">2 N</button>
+          <button class="quiz-opt" onclick="answerQ(this,false)">4 N</button>
+          <button class="quiz-opt" onclick="answerQ(this,true)">8 N</button>
+        </div>
+        <div class="quiz-result" id="quizResult">
+          <div><div style="font-size:.72rem;color:#9aa0c2;">Your score</div><div class="score" id="quizScore">0/3</div></div>
+          <div class="msg" id="quizMsg">Answer all 3 to see how this concept is scored — a low score auto-flags it as a weak area for next week's plan.</div>
+        </div>
+      </div>
+
+      <div class="lesson-footer">
+        <span style="font-size:.8rem;color:var(--muted);">Next up: Third Law of Motion</span>
+        <button class="btn btn-primary" onclick="closeLesson()">Mark topic complete →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let quizAnswered = 0, quizCorrect = 0;
+function answerQ(btn, isCorrect){
+  const group = btn.parentElement.querySelectorAll('.quiz-opt');
+  if(btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+  group.forEach(b=>b.disabled=true);
+  btn.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){
+    group.forEach(b=>{ if(b.onclick.toString().includes(',true)')) b.classList.add('correct'); });
+  }
+  quizAnswered++;
+  if(isCorrect) quizCorrect++;
+  if(quizAnswered===3){
+    document.getElementById('quizScore').textContent = quizCorrect+'/3';
+    document.getElementById('quizMsg').textContent = quizCorrect>=2
+      ? "Nice — this concept looks solid. It'll show up again briefly during spaced revision."
+      : "This concept needs another pass. It's been flagged weak and moved earlier in next week's plan.";
+    document.getElementById('quizResult').classList.add('show');
+  }
+}
+function openLesson(subject){
+  document.getElementById('dayModalOverlay').classList.remove('show');
+  goStep(3);
+}
+function closeLesson(){
+  goStep(2);
+}
+</script>
+
+<script>
+function goStep(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+n).classList.add('active');
+  document.querySelectorAll('.step-btn').forEach(b=>{
+    const step = parseInt(b.dataset.step);
+    b.classList.remove('active','done');
+    if(step === n) b.classList.add('active');
+    else if(step < n) b.classList.add('done');
+  });
+}
+function toggleStream(){
+  document.getElementById('streamField').style.display = 'none'; // grade fixed at 10 in this demo
+}
+document.querySelectorAll('#dayChips .chip').forEach(c=>{
+  c.addEventListener('click',()=>c.classList.toggle('sel'));
+});
+function showSubj(el,key){
+  document.querySelectorAll('.subj-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['physics','maths','chem','sci'].forEach(k=>{
+    document.getElementById('subj-'+k).style.display = (k===key)?'block':'none';
+  });
+}
+function toggleWeak(el,e){
+  e.preventDefault();
+  el.classList.toggle('on');
+}
+function setLibrary(el){
+  el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+</script>
+<!-- GENERATING OVERLAY -->
+<div class="gen-overlay" id="genOverlay">
+  <div class="gen-box">
+    <div class="gen-spinner"></div>
+    <h3>Building your weekly plan</h3>
+    <p>Fitting 5 chapters into 1–2 hrs/day across 6 days</p>
+    <div class="gen-steps" id="genSteps">
+      <div class="gen-step" data-s="1"><span class="mark"></span> Reading your weak-area flags</div>
+      <div class="gen-step" data-s="2"><span class="mark"></span> Sequencing chapters by syllabus order</div>
+      <div class="gen-step" data-s="3"><span class="mark"></span> Balancing daily load to your available hours</div>
+      <div class="gen-step" data-s="4"><span class="mark"></span> Inserting spaced revision &amp; practice blocks</div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY DETAIL MODAL -->
+<div class="day-modal-overlay" id="dayModalOverlay" onclick="if(event.target===this) closeDay();">
+  <div class="day-modal">
+    <div class="day-modal-head">
+      <div>
+        <h3 id="dmDate">Monday, Aug 3</h3>
+        <span id="dmTotal">2h 20m planned</span>
+      </div>
+      <button class="modal-close" onclick="closeDay()">✕</button>
+    </div>
+    <div id="dmTasks"></div>
+  </div>
+</div>
+
+<script>
+const weekPlanData = {
+  mon:{label:'Monday, Aug 3',total:'2h 20m planned',tasks:[
+    {subject:'maths',name:'Integration by Parts',time:'50 min',reason:'Weak area priority'},
+    {subject:'physics',name:'Work, Energy and Power',time:'50 min',reason:'Weak area priority'},
+    {subject:'chem',name:'SN1 vs SN2 Reactions',time:'40 min',reason:'Weak area priority'},
+  ]},
+  tue:{label:'Tuesday, Aug 4',total:'2h 0m planned',tasks:[
+    {subject:'physics',name:"Newton's Laws of Motion",time:'45 min',reason:'New chapter'},
+    {subject:'maths',name:'Differentiation',time:'50 min',reason:'New chapter'},
+    {subject:'mixed',name:'15 MCQs · Physics + Maths',time:'25 min',reason:'Practice'},
+  ]},
+  wed:{label:'Wednesday, Aug 5',total:'1h 25m planned',tasks:[
+    {subject:'chem',name:'Electrochemistry',time:'40 min',reason:'New chapter'},
+    {subject:'maths',name:'Coordinate Geometry',time:'45 min',reason:'New chapter'},
+  ]},
+  thu:{label:'Thursday, Aug 6',total:'1h 10m planned',tasks:[
+    {subject:'physics',name:'Impulse & Momentum',time:'45 min',reason:'New chapter'},
+    {subject:'mixed',name:'Revision · Work-Energy Theorem',time:'25 min',reason:'Spaced revision'},
+  ]},
+  fri:{label:'Friday, Aug 7',total:'1h 10m planned',tasks:[
+    {subject:'chem',name:'Periodic Table Trends',time:'40 min',reason:'New chapter'},
+    {subject:'mixed',name:'20 MCQs · Full week mix',time:'30 min',reason:'Practice'},
+  ]},
+  sat:{label:'Saturday, Aug 8',total:'1h 0m planned',tasks:[
+    {subject:'mixed',name:'Weekly revision — all 3 subjects',time:'60 min',reason:'Spaced revision'},
+  ]},
+};
+
+function startGenerate(){
+  document.getElementById('genOverlay').classList.add('show');
+  const steps = document.querySelectorAll('#genSteps .gen-step');
+  let i = 0;
+  function tick(){
+    if(i>0) steps[i-1].classList.replace('active','done');
+    if(i < steps.length){
+      steps[i].classList.add('active');
+      i++;
+      setTimeout(tick, 480);
+    } else {
+      setTimeout(()=>{
+        document.getElementById('genOverlay').classList.remove('show');
+        steps.forEach(s=>s.classList.remove('active','done'));
+        goStep(2);
+      }, 400);
+    }
+  }
+  tick();
+}
+
+function openDay(key){
+  const d = weekPlanData[key];
+  if(!d) return;
+  document.getElementById('dmDate').textContent = d.label;
+  document.getElementById('dmTotal').textContent = d.total;
+  const wrap = document.getElementById('dmTasks');
+  wrap.innerHTML = d.tasks.map((t,idx)=>`
+    <div class="dtask ${t.subject}">
+      <input type="checkbox" onclick="event.currentTarget.closest('.dtask').classList.toggle('checked')">
+      <div class="dtask-body">
+        <div class="dtag">${t.subject.toUpperCase()}</div>
+        <div class="dname">${t.name}</div>
+        <div class="dmeta"><span>${t.time}</span><span class="dreason">${t.reason}</span></div>
+        <div class="dtask-actions">
+          <button class="start-btn" onclick="openLesson('${t.subject}')">▶ Start learning</button>
+          <a class="pdf-link" href="#" onclick="return false;">📄 NCERT PDF</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('dayModalOverlay').classList.add('show');
+}
+function closeDay(){
+  document.getElementById('dayModalOverlay').classList.remove('show');
+}
+</script>
+</body>
+</html>

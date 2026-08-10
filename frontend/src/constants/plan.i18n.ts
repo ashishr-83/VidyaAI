@@ -87,6 +87,37 @@ export interface PlanStrings {
   toastDoubtOpen: string;
   toastComingSoon: string;
   toastAddTask: string;
+
+  // Chapter picker — step 1 UI
+  chapterLibraryLabel: string;
+  chapterLibraryMine: string;
+  weakAreaLabel: string;
+  hoursPerDayLabel: string;
+  generateWeeklyPlan: string;
+  chaptersSelected: string; // "{n} chapters selected across {s} subjects · {w} marked as weak areas"
+
+  // Weekly plan banner — step 2 UI
+  syllabusProgress: string;
+  studyFocus: string;
+  aiGeneratedPlan: string;
+  planRebalances: string; // "Built from {n} chapters · rebalances every Sunday night"
+
+  // Task reason pills
+  weakAreaPriority: string;
+  newChapter: string;
+  spacedRevision: string;
+  practiceLabel: string;
+
+  // Generating overlay
+  buildingPlan: string;
+  generatingStep1: string;
+  generatingStep2: string;
+  generatingStep3: string;
+  generatingStep4: string;
+
+  // Stepper
+  stepSubjectsChapters: string;
+  stepWeeklyPlan: string;
 }
 
 const en: PlanStrings = {
@@ -176,6 +207,32 @@ const en: PlanStrings = {
   toastDoubtOpen: '🎤 Opening doubt solver...',
   toastComingSoon: '📅 {tab} view — coming soon!',
   toastAddTask: 'Add custom task — coming soon!',
+
+  chapterLibraryLabel: 'Chapter library',
+  chapterLibraryMine: 'Class 7 · CBSE',
+  weakAreaLabel: 'Weak area',
+  hoursPerDayLabel: 'Hours you can study each day this week',
+  generateWeeklyPlan: 'Generate my weekly plan →',
+  chaptersSelected: '{n} chapters selected across {s} subjects · {w} marked as weak areas',
+
+  syllabusProgress: 'Syllabus progress',
+  studyFocus: 'Study focus',
+  aiGeneratedPlan: "This week's AI-generated plan",
+  planRebalances: 'Built from {n} chapters · rebalances every Sunday night',
+
+  weakAreaPriority: 'Weak area priority',
+  newChapter: 'New chapter',
+  spacedRevision: 'Spaced revision',
+  practiceLabel: 'Practice',
+
+  buildingPlan: 'Building your weekly plan',
+  generatingStep1: 'Reading your weak-area flags',
+  generatingStep2: 'Sequencing chapters by syllabus order',
+  generatingStep3: 'Balancing daily load to your available hours',
+  generatingStep4: 'Inserting spaced revision & practice blocks',
+
+  stepSubjectsChapters: 'Subjects & chapters',
+  stepWeeklyPlan: 'Weekly plan',
 };
 
 const hi: PlanStrings = {
@@ -265,6 +322,32 @@ const hi: PlanStrings = {
   toastDoubtOpen: '🎤 Doubt solver open ho raha hai!',
   toastComingSoon: '📅 {tab} view — coming soon!',
   toastAddTask: 'Add custom task — coming soon!',
+
+  chapterLibraryLabel: 'Chapter library',
+  chapterLibraryMine: 'Class 7 · CBSE',
+  weakAreaLabel: 'Weak area',
+  hoursPerDayLabel: 'Is hafte roz kitne ghante padh sakte ho',
+  generateWeeklyPlan: 'Mera weekly plan banao →',
+  chaptersSelected: '{n} chapters chunye {s} subjects mein · {w} weak areas mark kiye',
+
+  syllabusProgress: 'Syllabus progress',
+  studyFocus: 'Study focus',
+  aiGeneratedPlan: 'Is hafte ka AI-generated plan',
+  planRebalances: '{n} chapters se bana · har Sunday raat update hoga',
+
+  weakAreaPriority: 'Weak area priority',
+  newChapter: 'Naya chapter',
+  spacedRevision: 'Spaced revision',
+  practiceLabel: 'Practice',
+
+  buildingPlan: 'Tumhara weekly plan ban raha hai',
+  generatingStep1: 'Tumhare weak areas padh rahe hain',
+  generatingStep2: 'Chapters ko syllabus order mein laga rahe hain',
+  generatingStep3: 'Daily load balance kar rahe hain',
+  generatingStep4: 'Revision aur practice blocks add kar rahe hain',
+
+  stepSubjectsChapters: 'Subjects & chapters',
+  stepWeeklyPlan: 'Weekly plan',
 };
 
 export const planStrings: Record<SupportedLang, PlanStrings> = {
