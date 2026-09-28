@@ -32,6 +32,9 @@ jest.mock('../lib/env', () => ({
     TWILIO_ACCOUNT_SID: 'ACtest',
     TWILIO_AUTH_TOKEN: 'test-auth-token',
     TWILIO_SMS_FROM: '+15005550006',
+    OPENAI_API_KEY: 'sk-test',
+    EMBEDDING_MODEL: 'text-embedding-3-small',
+    EMBEDDING_DIMS: 1536,
   },
 }));
 
@@ -44,6 +47,7 @@ jest.mock('../services/claude', () => ({
 }));
 
 jest.mock('../services/speech', () => ({
+  s3Client: {},
   getUploadPresignedUrl: jest.fn(),
   transcribeAudio: jest.fn(),
   synthesiseSpeech: jest.fn(),

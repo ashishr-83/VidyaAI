@@ -11,6 +11,7 @@ import authRoutes from './routes/auth';
 import doubtRoutes from './routes/doubt';
 import planRoutes from './routes/plan';
 import lessonRoutes from './routes/lesson';
+import adminRoutes from './routes/admin';
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/doubt', doubtRoutes);
 app.use('/api/plan', planRoutes);
 app.use('/api/lesson', lessonRoutes);
+app.use('/api/admin', adminRoutes);
 // app.use('/api/progress', progressRoutes); // Session 7
 // app.use('/api/payment', paymentRoutes);   // Session 8
 

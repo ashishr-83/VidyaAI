@@ -105,7 +105,22 @@ model ChapterContent {
   pdfS3Key          String?
   processedAt       DateTime @default(now())
 
+  chunks            ChapterChunk[]
+
   @@unique([class, board, subject, chapterNumber])
+}
+
+model ChapterChunk {
+  id             String         @id @default(uuid())
+  chapterId      String
+  chapterContent ChapterContent @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  pageNumber     Int
+  chunkIndex     Int
+  text           String
+  embedding      Unsupported("vector(1536)")
+  createdAt      DateTime       @default(now())
+
+  @@index([chapterId])
 }
 
 model LessonSession {

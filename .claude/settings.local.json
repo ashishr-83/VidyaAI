@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/my-Project/Vidya_AI/VidyaAI/backend/**)",
+      "Bash(python *)",
+      "Bash(npx ts-node *)"
+    ]
+  }
+}

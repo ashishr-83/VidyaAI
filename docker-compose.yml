@@ -2,7 +2,7 @@ services:
 
   # ── PostgreSQL ──────────────────────────────────────────────────────────────
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     container_name: vidyaai-postgres
     restart: unless-stopped
     environment:

@@ -24,6 +24,10 @@ const envSchema = z.object({
   TWILIO_SMS_FROM: z.string().optional(),
   TWILIO_WHATSAPP_FROM: z.string().optional(),
   REDIS_URL: z.string().default('redis://localhost:6379'),
+  // OpenAI — used exclusively for text embeddings (RAG pipeline)
+  OPENAI_API_KEY: z.string().min(1),
+  EMBEDDING_MODEL: z.string().default('text-embedding-3-small'),
+  EMBEDDING_DIMS: z.coerce.number().int().default(1536),
 });
 
 export type Env = z.infer<typeof envSchema>;

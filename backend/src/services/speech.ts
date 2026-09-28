@@ -31,7 +31,7 @@ const s3Config: S3ClientConfig = {
     : {}),
 };
 
-const s3 = new S3Client(s3Config);
+export const s3Client = new S3Client(s3Config);
 const transcribe = new TranscribeClient({ region: env.AWS_REGION });
 const polly = new PollyClient({ region: env.AWS_REGION });
 
@@ -99,7 +99,7 @@ export async function getUploadPresignedUrl(
   });
 
   const start = Date.now();
-  const uploadUrl = await getSignedUrl(s3, command, { expiresIn: PRESIGNED_URL_EXPIRES_IN });
+  const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: PRESIGNED_URL_EXPIRES_IN });
   logger.info('S3 presigned URL generated', { latencyMs: Date.now() - start, s3Key });
 
   return { uploadUrl, s3Key };
@@ -165,7 +165,7 @@ export async function transcribeAudio(params: TranscribeAudioParams): Promise<st
 }
 
 async function fetchTranscriptFromS3(s3Key: string): Promise<string> {
-  const response = await s3.send(
+  const response = await s3Client.send(
     new GetObjectCommand({ Bucket: env.AWS_S3_BUCKET, Key: s3Key })
   );
 
@@ -218,7 +218,7 @@ export async function synthesiseSpeech(params: SynthesiseSpeechParams): Promise<
   const audioBuffer = Buffer.from(await pollyResponse.AudioStream.transformToByteArray());
 
   const s3Key = `audio/responses/${randomUUID()}.mp3`;
-  await s3.send(
+  await s3Client.send(
     new PutObjectCommand({
       Bucket: env.AWS_S3_BUCKET,
       Key: s3Key,

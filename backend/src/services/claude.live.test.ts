@@ -26,6 +26,9 @@ jest.mock('../lib/env', () => ({
     AWS_S3_BUCKET: 'test-bucket',
     AWS_TRANSCRIBE_LANGUAGE_CODE: 'hi-IN',
     REDIS_URL: 'redis://localhost:6379',
+    OPENAI_API_KEY: 'sk-test',
+    EMBEDDING_MODEL: 'text-embedding-3-small',
+    EMBEDDING_DIMS: 1536,
   },
 }));
 

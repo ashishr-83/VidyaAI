@@ -13,7 +13,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "lint": "tsc --noEmit",
-    "extract:chapters": "ts-node-dev --transpile-only scripts/extractChapters.ts"
+    "extract:chapters": "ts-node-dev --transpile-only scripts/extractChapters.ts",
+    "seed:ncert": "ts-node --transpile-only src/db/seed-ncert-class7.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
@@ -31,6 +32,8 @@
     "jsonwebtoken": "^9.0.0",
     "multer": "1.4.5-lts.1",
     "node-cron": "^3.0.0",
+    "openai": "^4.67.0",
+    "pdf-parse": "^2.4.5",
     "razorpay": "^2.9.0",
     "twilio": "^5.0.0",
     "winston": "^3.11.0",
@@ -45,6 +48,7 @@
     "@types/multer": "^1.4.11",
     "@types/node": "^20.0.0",
     "@types/node-cron": "^3.0.0",
+    "@types/pdf-parse": "^1.1.5",
     "@types/supertest": "^6.0.0",
     "jest": "^29.7.0",
     "prisma": "^5.0.0",

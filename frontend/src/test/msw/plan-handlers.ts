@@ -9,7 +9,7 @@ const BASE = 'http://localhost:3000';
 
 export const MOCK_AVAILABLE = {
   available: [
-    { classLevel: 7, board: 'CBSE', subjects: ['Science'] },
+    { classLevel: 7, board: 'CBSE', subjects: ['Mathematics', 'Science', 'Social Science'] },
   ],
 };
 
@@ -85,6 +85,10 @@ export const planHandlers = [
       planData: { version: 2, generatedPlan: MOCK_GENERATED_PLAN },
       streak: 3,
     })
+  ),
+
+  http.get(`${BASE}/api/plan/chapters/:id/pdf-url`, () =>
+    HttpResponse.json({ url: 'https://mock-presigned.url/chapter.pdf', expiresIn: 3600 })
   ),
 ];
 

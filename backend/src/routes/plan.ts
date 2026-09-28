@@ -2,7 +2,10 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import Redis from 'ioredis';
 import * as crypto from 'crypto';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { prisma } from '../lib/prisma';
+import { s3Client } from '../services/speech';
 
 // Returns `any` so the value is accepted by Prisma Json fields across all
 // @prisma/client versions (InputJsonValue was not in the Prisma namespace until 5.22+).
@@ -105,6 +108,48 @@ router.get(
       });
 
       res.json({ chapters });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ── GET /api/plan/chapters/:id/pdf-url ──────────────────────────────────────
+// Returns a pre-signed S3 GET URL for a chapter's PDF (1-hour expiry).
+// The ChapterPicker PDF button calls this to open the NCERT PDF.
+
+const PDF_URL_EXPIRES_IN = 3600; // 1 hour
+
+const pdfUrlParamsSchema = z.object({
+  id: z.string().uuid(),
+});
+
+router.get(
+  '/chapters/:id/pdf-url',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = pdfUrlParamsSchema.parse(req.params);
+
+      const chapter = await prisma.chapterContent.findUnique({
+        where: { id },
+        select: { pdfS3Key: true },
+      });
+
+      if (!chapter) {
+        return next(new AppError('Chapter not found', 'CHAPTER_NOT_FOUND', 404));
+      }
+      if (!chapter.pdfS3Key) {
+        return next(new AppError('PDF not available for this chapter', 'PDF_NOT_FOUND', 404));
+      }
+
+      const command = new GetObjectCommand({
+        Bucket: env.AWS_S3_BUCKET,
+        Key: chapter.pdfS3Key,
+      });
+
+      const url = await getSignedUrl(s3Client, command, { expiresIn: PDF_URL_EXPIRES_IN });
+
+      res.json({ url, expiresIn: PDF_URL_EXPIRES_IN });
     } catch (err) {
       next(err);
     }

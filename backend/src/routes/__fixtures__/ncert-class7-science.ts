@@ -15,7 +15,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What is the scientific method?', answer: 'A systematic process of observation, hypothesis, and experimentation.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_01_the_ever-evolving_world_of_science.pdf',
   },
   {
     class: 7,
@@ -30,7 +30,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What happens when an acid and base are mixed?', answer: 'They neutralise each other to form salt and water.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_02_exploring_substances_acidic_basic_and_neutral.pdf',
   },
   {
     class: 7,
@@ -45,7 +45,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What is an electric circuit?', answer: 'A closed path through which electric current flows.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_03_electricity_circuits_and_their_components.pdf',
   },
   {
     class: 7,
@@ -60,7 +60,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'Name two properties of metals.', answer: 'Metals are malleable and good conductors of electricity.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_04_the_world_of_metals_and_non-metals.pdf',
   },
   {
     class: 7,
@@ -75,7 +75,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'Give one example of a chemical change.', answer: 'Burning of wood produces ash and smoke, which cannot be reversed.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_05_changes_around_us_physical_and_chemical.pdf',
   },
   {
     class: 7,
@@ -90,7 +90,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What is puberty?', answer: 'The stage of life when the body becomes capable of reproduction.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_06_adolescence_a_stage_of_growth_and_change.pdf',
   },
   {
     class: 7,
@@ -105,7 +105,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What is conduction?', answer: 'Transfer of heat through a solid material without movement of the material itself.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_07_heat_transfer_in_nature.pdf',
   },
   {
     class: 7,
@@ -120,7 +120,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What is the formula for speed?', answer: 'Speed equals distance divided by time.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_08_measurement_of_time_and_motion.pdf',
   },
   {
     class: 7,
@@ -135,7 +135,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What is the role of the stomach in digestion?', answer: 'The stomach churns food and mixes it with digestive juices to break down proteins.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_09_life_processes_in_animals.pdf',
   },
   {
     class: 7,
@@ -150,7 +150,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'What is photosynthesis?', answer: 'The process by which plants use sunlight, water and carbon dioxide to produce glucose and oxygen.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_10_life_processes_in_plants.pdf',
   },
   {
     class: 7,
@@ -165,7 +165,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'State the law of reflection.', answer: 'The angle of incidence is equal to the angle of reflection, and both lie in the same plane.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_11_light_shadows_and_reflections.pdf',
   },
   {
     class: 7,
@@ -180,7 +180,7 @@ export const CLASS7_SCIENCE_CHAPTERS = [
     textbookQuestions: [
       { question: 'Why do we see different phases of the moon?', answer: 'Because different portions of the moon\'s illuminated half are visible from Earth as it revolves around Earth.' },
     ],
-    pdfS3Key: null,
+    pdfS3Key: 'NCERT/Class_7/Science/ch_12_earth_moon_and_the_sun.pdf',
   },
 ];
 
